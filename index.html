@@ -131,10 +131,15 @@
     }
   });
 
-  // ✅ Paiement utilisateur (corrigé)
-  const verifPaiementBtn = document.getElementById("verifPaiementBtn");
-  const inputPaiement = document.getElementById("inputPaiement");
-
+  verifPaiementBtn.addEventListener("click",()=>{
+  const message = inputPaiement.value.trim();
+  if(verifierMessage(message)){
+    alert("Paiement validé ! Retour à l'accueil...");
+    window.location.href="index.html"; // retour accueil
+  } else {
+    alert("Message invalide ! Vérifiez vos informations.");
+  }
+});
   function verifierMessage(message){
     message = message.toLowerCase();
     return abonnés.some(a => {
