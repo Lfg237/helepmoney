@@ -5,35 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>compte marchand</title>
 <style>
-  body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(120deg, #f6d365, #fda085);
-    margin:0; padding:0;
-  }
-  .container {
-    max-width: 900px;
-    margin: 50px auto;
-    padding: 20px;
-    background: rgba(255,255,255,0.95);
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    animation: fadeIn 1s ease-out;
-  }
+  body { font-family: 'Arial', sans-serif; background: linear-gradient(120deg, #f6d365, #fda085); margin:0; padding:0; }
+  .container { max-width: 900px; margin: 50px auto; padding: 20px; background: rgba(255,255,255,0.95); border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
   h1,h2 { text-align:center; color:#ff5722; text-shadow:1px 1px #ffe0b2; }
-  table { width:100%; border-collapse: collapse; margin-bottom:30px; animation: slideIn 1s ease-out; }
+  table { width:100%; border-collapse: collapse; margin-bottom:30px; }
   th,td { padding:12px; text-align:center; border-bottom:1px solid #ddd; }
   th { background:#ff9800; color:white; text-transform:uppercase; }
   tr:nth-child(even){background:#ffe0b2;}
   tr:hover{background:#ffd54f;}
   input, textarea { padding:10px; border-radius:5px; border:2px solid #ff5722; transition:0.3s; }
-  input:focus, textarea:focus { border-color:#ff9800; outline:none; }
   button { padding:10px 20px; border:none; border-radius:5px; background:#ff5722; color:white; font-weight:bold; cursor:pointer; transition:0.3s; }
-  button:hover { background:#ff9800; }
   .error { color:red; margin-top:10px; }
   .hidden { display:none; }
   .admin-access, .payment-section { text-align:center; margin-bottom:20px; }
-  @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
-  @keyframes slideIn { from {transform:translateY(50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
 </style>
 </head>
 <body>
@@ -93,28 +77,22 @@
 <script>
   const ADMIN_CODE = "233233";
 
-  // --- Données abonnés (montants autorisés)
+  // abonnés
   const abonnés = [
     { entreprise:"FACILITATEURS", proprietaire:"Jean Dupont", numero:"655123456", fournisseur:"Orange Money", montants:["2000","3000"], id:"123456" },
     { entreprise:"TECH SOLUTIONS", proprietaire:"LOVELINE KINYUY WIRNKAR", numero:"676353859", fournisseur:"MTN MoMo", montants:["50","25","55"], id:"654321" },
     { entreprise:"ABC ENTERPRISE", proprietaire:"Paul Etoundi", numero:"699112233", fournisseur:"Orange Money", montants:["2500"], id:"987654" }
   ];
 
-  // --- Storage keys
   const STORAGE_ETAT = "etatPaiements_v1";
   const STORAGE_TX = "processedTxIds_v1";
 
-  // --- Chargement et initialisation de l'état (persisté)
   const etatPaiements = JSON.parse(localStorage.getItem(STORAGE_ETAT)) || {};
-  const processedTxIds = JSON.parse(localStorage.getItem(STORAGE_TX)) || {}; // { txId: { abonneId, montant, date } }
+  const processedTxIds = JSON.parse(localStorage.getItem(STORAGE_TX)) || {};
 
   abonnés.forEach(a => {
     if(!etatPaiements[a.id]){
-      etatPaiements[a.id] = {
-        montantsRestants: [...a.montants], // copie
-        compteur: 0,
-        totalDepenses: 0
-      };
+      etatPaiements[a.id] = { montantsRestants: [...a.montants], compteur: 0, totalDepenses: 0 };
     }
   });
 
@@ -123,7 +101,7 @@
     localStorage.setItem(STORAGE_TX, JSON.stringify(processedTxIds));
   }
 
-  // --- Affichage public
+  // affichage public
   const publicTable = document.getElementById("publicTable");
   function fillPublicTable(){
     publicTable.innerHTML = "";
@@ -135,7 +113,7 @@
   }
   fillPublicTable();
 
-  // --- Admin UI
+  // admin UI
   const accessBtn = document.getElementById("accessBtn");
   const adminCodeInput = document.getElementById("adminCode");
   const accessMsg = document.getElementById("accessMsg");
@@ -175,23 +153,8 @@
     }
   });
 
-  // --- Outils : extraction tx id / hash / parsing montant
-  function extractTransactionId(message){
-    // Patterns courants (réf, ref, transaction, trx, id, code, n°, no)
-    const patterns = [
-      /\b(?:réf(?:érence)?|ref|reference|transaction|trans|trx|trn|id|code|n[°º]|no)\s*[:\-]?\s*([A-Za-z0-9\-]{4,})\b/i,
-      /\b([A-Z0-9]{6,})\b/,           // fallback : suite alphanum >=6
-      /\b([0-9]{6,})\b/               // fallback : suite numérique >=6
-    ];
-    for(const r of patterns){
-      const m = message.match(r);
-      if(m && m[1]) return m[1].toString();
-    }
-    return null;
-  }
-
+  // utilitaires
   function hashStringHex(s){
-    // djb2 -> hex string
     let h = 5381;
     for(let i=0;i<s.length;i++){
       h = ((h << 5) + h) + s.charCodeAt(i);
@@ -207,52 +170,64 @@
     return isNaN(n) ? 0 : n;
   }
 
-  // --- Mise à jour admin + suivi
-  function updateAdminTableAndSave(){
-    saveAll();
-    updateAdminTable();
+  // NE PAS considérer candidate comme txId s'il ressemble à un téléphone ou à un montant
+  function looksLikePhoneOrAmount(candidate, messageRaw, subscriber){
+    const digitsOnly = /^\d+$/.test(candidate);
+    const phone = String(subscriber.numero).replace(/\D/g,'');
+    if(phone && (candidate === phone || phone.endsWith(candidate) || candidate.endsWith(phone))) return true;
+    if(digitsOnly && candidate.length <= 7) return true;
+    const msgNums = (String(messageRaw).match(/[\d]+(?:[.,]\d+)?/g) || []).map(n => n.replace(',', '.'));
+    if(msgNums.includes(candidate.replace(',', '.'))) return true;
+    return false;
   }
 
-  // --- Validation du paiement (nouvelle logique)
+  // extraction tx id corrigée
+  function extractTransactionId(messageRaw, subscriber){
+    // 1) chercher "transaction Id"
+    const transMatch = messageRaw.match(/transaction\s+id[:\-]?\s*([0-9A-Za-z\-]{6,})/i);
+    if(transMatch && transMatch[1]){
+      return transMatch[1];
+    }
+
+    // 2) sinon chercher ref/trx/id mais ignorer "Reference: 0"
+    const labeled = messageRaw.match(/\b(?:réf(?:érence)?|ref|trx|trn|id|code|n[°º]|no)\s*[:\-]?\s*([A-Za-z0-9\-]{4,})\b/i);
+    if(labeled && labeled[1] && labeled[1] !== "0"){
+      const cand = String(labeled[1]);
+      if(!looksLikePhoneOrAmount(cand, messageRaw, subscriber)) return cand;
+    }
+
+    // 3) fallback : hash du message
+    return "MSG_" + hashStringHex(messageRaw);
+  }
+
+  // validation paiement
   const verifPaiementBtn = document.getElementById("verifPaiementBtn");
   const inputPaiement = document.getElementById("inputPaiement");
 
   verifPaiementBtn.addEventListener("click", ()=>{
     const messageRaw = inputPaiement.value.trim();
-    if(!messageRaw){
-      alert("Collez d'abord le message Mobile Money.");
-      return;
-    }
+    if(!messageRaw){ alert("Collez d'abord le message Mobile Money."); return; }
     verifierMessage(messageRaw);
   });
 
   function verifierMessage(messageRaw){
     const message = messageRaw.toLowerCase();
 
-    for(let a of abonnés){
-      // vérifier numéro et premier nom
+    for(const a of abonnés){
       const numeroOK = message.includes(a.numero.slice(-9));
       const nomOK = message.includes(a.proprietaire.toLowerCase().split(" ")[0]);
 
       if(numeroOK && nomOK){
-        // extraction id tx
-        let txId = extractTransactionId(messageRaw);
-        if(!txId){
-          // fallback : hash du message (préserve détection de doublon si on colle exactement le même message)
-          txId = "MSG_" + hashStringHex(messageRaw);
-        }
+        const txId = extractTransactionId(messageRaw, a);
 
-        // si txId déjà traité -> doublon
         if(processedTxIds[txId]){
           const info = processedTxIds[txId];
           alert(`⚠️ Transaction déjà traitée (id=${txId}).\nDéjà validée pour l'abonné id=${info.abonneId}, montant=${info.montant} le ${new Date(info.date).toLocaleString()}`);
           return false;
         }
 
-        // trouver un montant dans le message qui correspond aux montants autorisés
         const messageNumbers = (messageRaw.match(/[\d]+(?:[.,]\d+)?/g) || []).map(n => n.replace(',', '.'));
         const allowedAmounts = a.montants.map(m => String(m).replace(',', '.'));
-        // trouver le premier montant autorisé présent
         let matchedAmount = null;
         for(const am of allowedAmounts){
           if(messageNumbers.includes(am)){
@@ -266,25 +241,16 @@
           return false;
         }
 
-        // Tout ok -> marquer comme traité
         const et = etatPaiements[a.id];
-
-        // retirer une occurrence dans montantsRestants si elle existe
         const idxRest = et.montantsRestants.findIndex(m => String(m).replace(',', '.') === matchedAmount);
         if(idxRest !== -1){
           et.montantsRestants.splice(idxRest, 1);
         }
-        // incrémenter compteur et total
         const montantNum = parseAmountNumber(matchedAmount);
         et.compteur = (et.compteur || 0) + 1;
         et.totalDepenses = (et.totalDepenses || 0) + montantNum;
 
-        // enregistrer txId
-        processedTxIds[txId] = {
-          abonneId: a.id,
-          montant: matchedAmount,
-          date: new Date().toISOString()
-        };
+        processedTxIds[txId] = { abonneId: a.id, montant: matchedAmount, date: new Date().toISOString() };
 
         saveAll();
         updateAdminTable();
@@ -297,12 +263,9 @@
     return false;
   }
 
-  // initialisation affichage admin si nécessaire
+  // init affichage admin
   updateAdminTable();
 
-  // --- Expose save/debug sur console si utile
-  window.__etatPaiements = etatPaiements;
-  window.__processedTxIds = processedTxIds;
 </script>
 </body>
 </html>
