@@ -40,7 +40,7 @@
 <div class="container">
   <h1>📊 helepmoney</h1>
 
-  <!-- Tableau public pour tous -->
+  <!-- Tableau public -->
   <table>
     <thead>
       <tr>
@@ -61,16 +61,20 @@
     <p id="accessMsg" class="error"></p>
   </div>
 
-  <!-- Tableau admin caché -->
+  <!-- Tableau admin -->
   <div id="adminTableContainer" class="hidden">
     <h2>📋 Tableau Administrateur</h2>
     <table>
       <thead>
         <tr>
-          <th>Nom Entreprise</th>
+          <th>Entreprise</th>
           <th>Propriétaire</th>
-          <th>Numéro Mobile Money</th>
+          <th>Numéro</th>
           <th>Fournisseur</th>
+          <th>Montants acceptés</th>
+          <th>Montants restants</th>
+          <th>Paiements validés</th>
+          <th>Total reçu</th>
         </tr>
       </thead>
       <tbody id="adminTable"></tbody>
@@ -89,27 +93,73 @@
 <script>
   const ADMIN_CODE = "233233";
 
-  // Liste des abonnés (public et admin)
+  // --- Données abonnés (montants autorisés)
   const abonnés = [
-    { entreprise:"FACILITATEURS", proprietaire:"Jean Dupont", numero:"655123456", fournisseur:"Orange Money", montant:"2000", id:"123456" },
-    { entreprise:"TECH SOLUTIONS", proprietaire:"LOVELINE KINYUY WIRNKAR", numero:"676353859", fournisseur:"MTN MoMo", montant:"50,25,55", id:"654321" },
-    { entreprise:"ABC ENTERPRISE", proprietaire:"Paul Etoundi", numero:"699112233", fournisseur:"Orange Money", montant:"2500", id:"987654" }
+    { entreprise:"FACILITATEURS", proprietaire:"Jean Dupont", numero:"655123456", fournisseur:"Orange Money", montants:["2000","3000"], id:"123456" },
+    { entreprise:"TECH SOLUTIONS", proprietaire:"LOVELINE KINYUY WIRNKAR", numero:"676353859", fournisseur:"MTN MoMo", montants:["50","25","55"], id:"654321" },
+    { entreprise:"ABC ENTERPRISE", proprietaire:"Paul Etoundi", numero:"699112233", fournisseur:"Orange Money", montants:["2500"], id:"987654" }
   ];
 
-  // Affichage public
-  const publicTable = document.getElementById("publicTable");
+  // --- Storage keys
+  const STORAGE_ETAT = "etatPaiements_v1";
+  const STORAGE_TX = "processedTxIds_v1";
+
+  // --- Chargement et initialisation de l'état (persisté)
+  const etatPaiements = JSON.parse(localStorage.getItem(STORAGE_ETAT)) || {};
+  const processedTxIds = JSON.parse(localStorage.getItem(STORAGE_TX)) || {}; // { txId: { abonneId, montant, date } }
+
   abonnés.forEach(a => {
-    const row = document.createElement("tr");
-    row.innerHTML = `<td>${a.entreprise}</td><td>${a.proprietaire}</td><td>${a.numero}</td><td>${a.fournisseur}</td>`;
-    publicTable.appendChild(row);
+    if(!etatPaiements[a.id]){
+      etatPaiements[a.id] = {
+        montantsRestants: [...a.montants], // copie
+        compteur: 0,
+        totalDepenses: 0
+      };
+    }
   });
 
-  // Accès admin
+  function saveAll(){
+    localStorage.setItem(STORAGE_ETAT, JSON.stringify(etatPaiements));
+    localStorage.setItem(STORAGE_TX, JSON.stringify(processedTxIds));
+  }
+
+  // --- Affichage public
+  const publicTable = document.getElementById("publicTable");
+  function fillPublicTable(){
+    publicTable.innerHTML = "";
+    abonnés.forEach(a => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${a.entreprise}</td><td>${a.proprietaire}</td><td>${a.numero}</td><td>${a.fournisseur}</td>`;
+      publicTable.appendChild(row);
+    });
+  }
+  fillPublicTable();
+
+  // --- Admin UI
   const accessBtn = document.getElementById("accessBtn");
   const adminCodeInput = document.getElementById("adminCode");
   const accessMsg = document.getElementById("accessMsg");
   const adminTableContainer = document.getElementById("adminTableContainer");
   const adminTable = document.getElementById("adminTable");
+
+  function updateAdminTable(){
+    adminTable.innerHTML = "";
+    abonnés.forEach(a => {
+      const et = etatPaiements[a.id];
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${a.entreprise}</td>
+        <td>${a.proprietaire}</td>
+        <td>${a.numero}</td>
+        <td>${a.fournisseur}</td>
+        <td>${a.montants.join(", ")}</td>
+        <td>${et.montantsRestants.join(", ") || "Aucun"}</td>
+        <td>${et.compteur}</td>
+        <td>${et.totalDepenses}</td>
+      `;
+      adminTable.appendChild(tr);
+    });
+  }
 
   accessBtn.addEventListener("click", () => {
     const code = adminCodeInput.value.trim();
@@ -117,13 +167,7 @@
       accessMsg.textContent = "Accès Admin validé !";
       accessMsg.style.color = "green";
       adminTableContainer.classList.remove("hidden");
-      // Remplir tableau admin
-      adminTable.innerHTML = "";
-      abonnés.forEach(a => {
-        const row = document.createElement("tr");
-        row.innerHTML = `<td>${a.entreprise}</td><td>${a.proprietaire}</td><td>${a.numero}</td><td>${a.fournisseur}</td>`;
-        adminTable.appendChild(row);
-      });
+      updateAdminTable();
     } else {
       accessMsg.textContent = "Code incorrect !";
       accessMsg.style.color = "red";
@@ -131,34 +175,134 @@
     }
   });
 
-  verifPaiementBtn.addEventListener("click",()=>{
-  const message = inputPaiement.value.trim();
-  if(verifierMessage(message)){
-    alert("Paiement validé ! Retour à l'accueil...");
-    window.location.href="index.html"; // retour accueil
-  } else {
-    alert("Message invalide ! Vérifiez vos informations.");
-  }
-});
-  function verifierMessage(message){
-    message = message.toLowerCase();
-    return abonnés.some(a => {
-      let montantOK = message.includes(a.montant);
-      let numeroOK = message.includes(a.numero.slice(-9)); // derniers 9 chiffres
-      let nomOK = message.includes(a.proprietaire.toLowerCase().split(" ")[0]); // premier mot du nom
-      return montantOK && numeroOK && nomOK;
-    });
+  // --- Outils : extraction tx id / hash / parsing montant
+  function extractTransactionId(message){
+    // Patterns courants (réf, ref, transaction, trx, id, code, n°, no)
+    const patterns = [
+      /\b(?:réf(?:érence)?|ref|reference|transaction|trans|trx|trn|id|code|n[°º]|no)\s*[:\-]?\s*([A-Za-z0-9\-]{4,})\b/i,
+      /\b([A-Z0-9]{6,})\b/,           // fallback : suite alphanum >=6
+      /\b([0-9]{6,})\b/               // fallback : suite numérique >=6
+    ];
+    for(const r of patterns){
+      const m = message.match(r);
+      if(m && m[1]) return m[1].toString();
+    }
+    return null;
   }
 
-  verifPaiementBtn.addEventListener("click",()=>{
-    const message = inputPaiement.value.trim();
-    if(verifierMessage(message)){
-      alert("Paiement validé ! Redirection automatique...");
-      window.location.href="produit.html";
-    } else {
-      alert("Message invalide ! Vérifiez vos informations.");
+  function hashStringHex(s){
+    // djb2 -> hex string
+    let h = 5381;
+    for(let i=0;i<s.length;i++){
+      h = ((h << 5) + h) + s.charCodeAt(i);
+      h = h & 0xFFFFFFFF;
     }
+    return (h >>> 0).toString(16);
+  }
+
+  function parseAmountNumber(str){
+    if(!str && str !== 0) return 0;
+    let s = String(str).replace(/\s/g, '').replace(/[^0-9.,-]/g,'').replace(',', '.');
+    const n = parseFloat(s);
+    return isNaN(n) ? 0 : n;
+  }
+
+  // --- Mise à jour admin + suivi
+  function updateAdminTableAndSave(){
+    saveAll();
+    updateAdminTable();
+  }
+
+  // --- Validation du paiement (nouvelle logique)
+  const verifPaiementBtn = document.getElementById("verifPaiementBtn");
+  const inputPaiement = document.getElementById("inputPaiement");
+
+  verifPaiementBtn.addEventListener("click", ()=>{
+    const messageRaw = inputPaiement.value.trim();
+    if(!messageRaw){
+      alert("Collez d'abord le message Mobile Money.");
+      return;
+    }
+    verifierMessage(messageRaw);
   });
+
+  function verifierMessage(messageRaw){
+    const message = messageRaw.toLowerCase();
+
+    for(let a of abonnés){
+      // vérifier numéro et premier nom
+      const numeroOK = message.includes(a.numero.slice(-9));
+      const nomOK = message.includes(a.proprietaire.toLowerCase().split(" ")[0]);
+
+      if(numeroOK && nomOK){
+        // extraction id tx
+        let txId = extractTransactionId(messageRaw);
+        if(!txId){
+          // fallback : hash du message (préserve détection de doublon si on colle exactement le même message)
+          txId = "MSG_" + hashStringHex(messageRaw);
+        }
+
+        // si txId déjà traité -> doublon
+        if(processedTxIds[txId]){
+          const info = processedTxIds[txId];
+          alert(`⚠️ Transaction déjà traitée (id=${txId}).\nDéjà validée pour l'abonné id=${info.abonneId}, montant=${info.montant} le ${new Date(info.date).toLocaleString()}`);
+          return false;
+        }
+
+        // trouver un montant dans le message qui correspond aux montants autorisés
+        const messageNumbers = (messageRaw.match(/[\d]+(?:[.,]\d+)?/g) || []).map(n => n.replace(',', '.'));
+        const allowedAmounts = a.montants.map(m => String(m).replace(',', '.'));
+        // trouver le premier montant autorisé présent
+        let matchedAmount = null;
+        for(const am of allowedAmounts){
+          if(messageNumbers.includes(am)){
+            matchedAmount = am;
+            break;
+          }
+        }
+
+        if(!matchedAmount){
+          alert(`❌ Aucun montant autorisé trouvé dans le message pour ${a.entreprise}. Montants acceptés : ${a.montants.join(", ")}`);
+          return false;
+        }
+
+        // Tout ok -> marquer comme traité
+        const et = etatPaiements[a.id];
+
+        // retirer une occurrence dans montantsRestants si elle existe
+        const idxRest = et.montantsRestants.findIndex(m => String(m).replace(',', '.') === matchedAmount);
+        if(idxRest !== -1){
+          et.montantsRestants.splice(idxRest, 1);
+        }
+        // incrémenter compteur et total
+        const montantNum = parseAmountNumber(matchedAmount);
+        et.compteur = (et.compteur || 0) + 1;
+        et.totalDepenses = (et.totalDepenses || 0) + montantNum;
+
+        // enregistrer txId
+        processedTxIds[txId] = {
+          abonneId: a.id,
+          montant: matchedAmount,
+          date: new Date().toISOString()
+        };
+
+        saveAll();
+        updateAdminTable();
+        alert(`✅ Paiement validé pour ${a.entreprise} — montant: ${matchedAmount} — txId: ${txId}`);
+        return true;
+      }
+    }
+
+    alert("Message invalide : numéro ou nom non reconnus.");
+    return false;
+  }
+
+  // initialisation affichage admin si nécessaire
+  updateAdminTable();
+
+  // --- Expose save/debug sur console si utile
+  window.__etatPaiements = etatPaiements;
+  window.__processedTxIds = processedTxIds;
 </script>
 </body>
 </html>
