@@ -3,15 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Administration Abonnés</title>
+<title>Abonnés & Paiement</title>
 <style>
-  /* ===== CSS intégré ===== */
   body {
     font-family: 'Arial', sans-serif;
     background: linear-gradient(120deg, #f6d365, #fda085);
-    color: #333;
-    margin: 0;
-    padding: 0;
+    margin:0; padding:0;
   }
   .container {
     max-width: 900px;
@@ -22,74 +19,39 @@
     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     animation: fadeIn 1s ease-out;
   }
-  h1,h2 {
-    text-align: center;
-    color: #ff5722;
-    text-shadow: 1px 1px #ffe0b2;
-  }
-  .admin-access, .payment-section {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .admin-access input, .payment-section textarea {
-    padding: 10px;
-    width: 250px;
-    border-radius: 5px;
-    border: 2px solid #ff5722;
-    transition: 0.3s;
-  }
-  .admin-access input:focus, .payment-section textarea:focus {
-    border-color: #ff9800;
-    outline: none;
-  }
-  .admin-access button, .payment-section button {
-    padding: 10px 20px;
-    margin-left: 10px;
-    border: none;
-    border-radius: 5px;
-    background: #ff5722;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  .admin-access button:hover, .payment-section button:hover {
-    background: #ff9800;
-  }
-  .error {
-    color: red;
-    margin-top: 10px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    animation: slideIn 1s ease-out;
-    margin-bottom: 30px;
-  }
-  th, td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-  }
-  th {
-    background: #ff9800;
-    color: white;
-    text-transform: uppercase;
-  }
-  tr:nth-child(even) {
-    background: #ffe0b2;
-  }
-  tr:hover {
-    background: #ffd54f;
-  }
-  .hidden { display: none; }
+  h1,h2 { text-align:center; color:#ff5722; text-shadow:1px 1px #ffe0b2; }
+  table { width:100%; border-collapse: collapse; margin-bottom:30px; animation: slideIn 1s ease-out; }
+  th,td { padding:12px; text-align:center; border-bottom:1px solid #ddd; }
+  th { background:#ff9800; color:white; text-transform:uppercase; }
+  tr:nth-child(even){background:#ffe0b2;}
+  tr:hover{background:#ffd54f;}
+  input, textarea { padding:10px; border-radius:5px; border:2px solid #ff5722; transition:0.3s; }
+  input:focus, textarea:focus { border-color:#ff9800; outline:none; }
+  button { padding:10px 20px; border:none; border-radius:5px; background:#ff5722; color:white; font-weight:bold; cursor:pointer; transition:0.3s; }
+  button:hover { background:#ff9800; }
+  .error { color:red; margin-top:10px; }
+  .hidden { display:none; }
+  .admin-access, .payment-section { text-align:center; margin-bottom:20px; }
   @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
   @keyframes slideIn { from {transform:translateY(50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>📊 Tableau des Abonnés</h1>
+  <h1>📊 Abonnés disponibles</h1>
+
+  <!-- Tableau public pour tous -->
+  <table>
+    <thead>
+      <tr>
+        <th>Nom Entreprise</th>
+        <th>Propriétaire</th>
+        <th>Numéro Mobile Money</th>
+        <th>Fournisseur</th>
+      </tr>
+    </thead>
+    <tbody id="publicTable"></tbody>
+  </table>
 
   <!-- Accès admin -->
   <div class="admin-access">
@@ -99,8 +61,9 @@
     <p id="accessMsg" class="error"></p>
   </div>
 
-  <!-- Tableau abonnés -->
-  <div id="tableContainer" class="hidden">
+  <!-- Tableau admin caché -->
+  <div id="adminTableContainer" class="hidden">
+    <h2>📋 Tableau Administrateur</h2>
     <table>
       <thead>
         <tr>
@@ -110,53 +73,61 @@
           <th>Fournisseur</th>
         </tr>
       </thead>
-      <tbody id="abonnesTable"></tbody>
+      <tbody id="adminTable"></tbody>
     </table>
   </div>
 
   <!-- Paiement utilisateur -->
   <div class="payment-section">
     <h2>Paiement Mobile Money</h2>
-    <p>Collez ici le message reçu après paiement :</p>
+    <p>Collez le message reçu après votre paiement :</p>
     <textarea id="inputPaiement" rows="4" placeholder="Collez le message Mobile Money"></textarea>
     <button id="verifPaiementBtn">Valider le paiement</button>
   </div>
 </div>
 
 <script>
-  // ===== JS intégré =====
   const ADMIN_CODE = "233233";
+
+  // Liste des abonnés (public et admin)
+  const abonnés = [
+    { entreprise:"FACILITATEURS", proprietaire:"Jean Dupont", numero:"655123456", fournisseur:"Orange Money", montant:"2000", id:"123456" },
+    { entreprise:"TECH SOLUTIONS", proprietaire:"Alice Mbarga", numero:"670987654", fournisseur:"MTN MoMo", montant:"3000", id:"654321" },
+    { entreprise:"ABC ENTERPRISE", proprietaire:"Paul Etoundi", numero:"699112233", fournisseur:"Orange Money", montant:"2500", id:"987654" }
+  ];
+
+  // Affichage public
+  const publicTable = document.getElementById("publicTable");
+  abonnés.forEach(a => {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${a.entreprise}</td><td>${a.proprietaire}</td><td>${a.numero}</td><td>${a.fournisseur}</td>`;
+    publicTable.appendChild(row);
+  });
+
+  // Accès admin
   const accessBtn = document.getElementById("accessBtn");
   const adminCodeInput = document.getElementById("adminCode");
   const accessMsg = document.getElementById("accessMsg");
-  const tableContainer = document.getElementById("tableContainer");
-  const abonnesTable = document.getElementById("abonnesTable");
-
-  // Liste abonnés
-  const abonnés = [
-    { entreprise:"FACILITATEURS", proprietaire:"Jean Dupont", numero:"655123456", fournisseur:"Orange Money" },
-    { entreprise:"TECH SOLUTIONS", proprietaire:"Alice Mbarga", numero:"670987654", fournisseur:"MTN MoMo" },
-    { entreprise:"ABC ENTERPRISE", proprietaire:"Paul Etoundi", numero:"699112233", fournisseur:"Orange Money" }
-  ];
-
-  function displayAbonnes() {
-    abonnesTable.innerHTML = "";
-    abonnés.forEach(a => {
-      const row = document.createElement("tr");
-      row.innerHTML = `<td>${a.entreprise}</td><td>${a.proprietaire}</td><td>${a.numero}</td><td>${a.fournisseur}</td>`;
-      abonnesTable.appendChild(row);
-    });
-  }
+  const adminTableContainer = document.getElementById("adminTableContainer");
+  const adminTable = document.getElementById("adminTable");
 
   accessBtn.addEventListener("click", () => {
     const code = adminCodeInput.value.trim();
-    if(code === ADMIN_CODE) {
-      accessMsg.textContent = "";
-      tableContainer.classList.remove("hidden");
-      displayAbonnes();
+    if(code === ADMIN_CODE){
+      accessMsg.textContent = "Accès Admin validé !";
+      accessMsg.style.color = "green";
+      adminTableContainer.classList.remove("hidden");
+      // Remplir tableau admin
+      adminTable.innerHTML = "";
+      abonnés.forEach(a => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${a.entreprise}</td><td>${a.proprietaire}</td><td>${a.numero}</td><td>${a.fournisseur}</td>`;
+        adminTable.appendChild(row);
+      });
     } else {
       accessMsg.textContent = "Code incorrect !";
-      tableContainer.classList.add("hidden");
+      accessMsg.style.color = "red";
+      adminTableContainer.classList.add("hidden");
     }
   });
 
@@ -164,24 +135,23 @@
   const verifPaiementBtn = document.getElementById("verifPaiementBtn");
   const inputPaiement = document.getElementById("inputPaiement");
 
-  const paiementAttendu = { proprietaire:"Jean Dupont", numero:"655123456", fournisseur:"Orange Money", montant:"2000", id:"123456" };
-
-  function verifierMessage(message) {
+  function verifierMessage(message){
     message = message.toLowerCase();
-    return (
-      message.includes(paiementAttendu.proprietaire.toLowerCase()) &&
-      message.includes(paiementAttendu.numero) &&
-      message.includes(paiementAttendu.fournisseur.toLowerCase()) &&
-      message.includes(paiementAttendu.montant) &&
-      message.includes(paiementAttendu.id)
+    // Vérifie contre chaque abonné
+    return abonnés.some(a =>
+      message.includes(a.proprietaire.toLowerCase()) &&
+      message.includes(a.numero) &&
+      message.includes(a.fournisseur.toLowerCase()) &&
+      message.includes(a.montant) &&
+      message.includes(a.id)
     );
   }
 
-  verifPaiementBtn.addEventListener("click", () => {
+  verifPaiementBtn.addEventListener("click",()=>{
     const message = inputPaiement.value.trim();
-    if(verifierMessage(message)) {
-      alert("Paiement validé ! Redirection...");
-      window.location.href = "produit.html"; // redirection automatique
+    if(verifierMessage(message)){
+      alert("Paiement validé ! Redirection automatique...");
+      window.location.href="produit.html";
     } else {
       alert("Message invalide ! Vérifiez vos informations.");
     }
