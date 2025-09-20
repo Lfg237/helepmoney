@@ -92,17 +92,19 @@ const validerPaiement=document.getElementById("validerPaiement");
 const msgPaiement=document.getElementById("msgPaiement");
 const retourAdmin=document.getElementById("retourAdmin");
 
+// Mettre à jour le tableau admin
 function updateAdminTable(){
   adminTable.innerHTML="";
   abonnés.forEach(a=>{
-    const tr=document.createElement("tr");
-    const lien=`javascript:openAbonne('${a.id}')`;
+    const lien=`https://helepmoney.vercel.app/?abonne=${a.id}`;
     const btnEtat=a.ouvert?'Ouvert':'Fermé';
-    tr.innerHTML=`<td>${a.entreprise}</td><td>${a.proprietaire}</td><td>${a.numero}</td><td>${a.montants.join(", ")}</td><td><a href="${lien}">Voir</a></td><td>${btnEtat}</td>`;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${a.entreprise}</td><td>${a.proprietaire}</td><td>${a.numero}</td><td>${a.montants.join(", ")}</td><td><a href="${lien}" target="_blank">Voir</a></td><td>${btnEtat}</td>`;
     adminTable.appendChild(tr);
   });
 }
 
+// Accès admin
 accessBtn.addEventListener("click",()=>{
   if(adminCodeInput.value.trim()===ADMIN_CODE){
     accessMsg.textContent="✅ Accès autorisé";
@@ -112,6 +114,7 @@ accessBtn.addEventListener("click",()=>{
   }
 });
 
+// Ouvrir un abonné depuis le tableau
 function openAbonne(id){
   const ab=abonnés.find(a=>a.id===id);
   if(!ab || !ab.ouvert) return alert("Abonné fermé ou introuvable");
@@ -120,6 +123,7 @@ function openAbonne(id){
   showAbonne(ab);
 }
 
+// Afficher les détails d'un abonné
 function showAbonne(a){
   abonneDetail.classList.remove("hidden");
   abonneNom.textContent=a.proprietaire;
@@ -153,7 +157,6 @@ validerPaiement.addEventListener("click",()=>{
   const montant=parseFloat(montantPaiement.value.trim());
   if(!message || !montant){ msgPaiement.textContent="Veuillez remplir message et montant."; return; }
 
-  // Extraire ID transaction depuis le message
   const regex=/transaction\s*id\s*[:\-]?\s*(\d+)/i;
   const match=message.match(regex);
   if(!match){ msgPaiement.textContent="ID transaction non trouvé."; return; }
@@ -164,7 +167,7 @@ validerPaiement.addEventListener("click",()=>{
     return;
   }
 
-  // Vérifier que le message correspond au nom et numéro de l'abonné sélectionné
+  // Vérifier le nom et le numéro dans le message
   const ab=abonnés.find(a=>a.id===abonneNom.dataset.id);
   if(!ab || !message.toLowerCase().includes(ab.proprietaire.toLowerCase()) || !message.includes(ab.numero)){
     msgPaiement.textContent="Le paiement ne correspond pas à cet abonné.";
@@ -179,10 +182,25 @@ validerPaiement.addEventListener("click",()=>{
   montantPaiement.value="";
 });
 
+// Retour admin
 retourAdmin.addEventListener("click",()=>{
   userSection.classList.add("hidden");
   adminSection.classList.remove("hidden");
   abonneDetail.classList.add("hidden");
+});
+
+// Ouvrir abonné depuis lien URL
+window.addEventListener("load",()=>{
+  const params=new URLSearchParams(window.location.search);
+  const idAbonne=params.get("abonne");
+  if(idAbonne){
+    const ab=abonnés.find(a=>a.id===idAbonne);
+    if(ab && ab.ouvert){
+      adminSection.classList.add("hidden");
+      userSection.classList.remove("hidden");
+      showAbonne(ab);
+    }
+  }
 });
 </script>
 </body>
