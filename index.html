@@ -17,11 +17,10 @@ th,td{padding:8px;text-align:center;border:1px solid #ddd;}
 th{background:#ff9800;color:white;}
 tr:hover{background:#ffe0b2;cursor:pointer;}
 ul{list-style:none;padding:0;}
-li{padding:5px;background:#ffd54f;margin:3px 0;border-radius:5px;cursor:pointer;}
+li{padding:5px;background:#ffd54f;margin:3px 0;border-radius:5px;}
 </style>
 </head>
 <body>
-
 <div class="container" id="adminSection">
 <h1><b>HelpMoney - Administration</b></h1>
 <label>Code Admin :</label>
@@ -35,9 +34,6 @@ li{padding:5px;background:#ffd54f;margin:3px 0;border-radius:5px;cursor:pointer;
 <th>Propriétaire</th>
 <th>Comptes</th>
 <th>Montants</th>
-<th>Montants restants</th>
-<th>Paiements validés</th>
-<th>Total reçu</th>
 <th>Lien abonné</th>
 <th>État</th>
 </tr>
@@ -56,7 +52,7 @@ li{padding:5px;background:#ffd54f;margin:3px 0;border-radius:5px;cursor:pointer;
 <p><b>Entreprise :</b> <span id="abonneEntreprise"></span></p>
 <p><b>Propriétaire :</b> <span id="abonneProprietaire"></span></p>
 <p><b>Comptes :</b> <span id="abonneComptes"></span></p>
-<p><b>Montants autorisés :</b> <span id="abonneMontants">—</span></p>
+<p><b>Montants autorisés :</b> <span id="abonneMontants"></span></p>
 <textarea id="messagePaiement" rows="4" placeholder="Collez le message Mobile Money"></textarea>
 <input type="number" id="montantPaiement" placeholder="Montant payé">
 <button id="validerPaiement">Valider le paiement</button>
@@ -66,10 +62,15 @@ li{padding:5px;background:#ffd54f;margin:3px 0;border-radius:5px;cursor:pointer;
 
 <script>
 const ADMIN_CODE="233233";
+
+// Liste des abonnés avec ID interne
 const abonnés=[
-  {id:"123456", entreprise:"FACILITATEURS", proprietaire:"Jean Dupont", comptes:[{fournisseur:"Orange Money", numero:"655123456"},{fournisseur:"MTN MoMo", numero:"677889900"}], montants:["2000","3000"], ouvert:true, compteur:0, totalDepenses:0, transactions:[]},
-  {id:"654321", entreprise:"TECH SOLUTIONS", proprietaire:"LOVELINE KINYUY WIRNKAR", comptes:[{fournisseur:"MTN MoMo", numero:"676353859"},{fournisseur:"Orange Money", numero:"699001122"}], montants:["50","25","55"], ouvert:true, compteur:0, totalDepenses:0, transactions:[]}
+  {id:"A001", entreprise:"FACILITATEURS", proprietaire:"Jean Dupont", numero:"655123456", montants:["2000","3000"], ouvert:true, transactions:[]},
+  {id:"A002", entreprise:"TECH SOLUTIONS", proprietaire:"LOVELINE KINYUY WIRNKAR", numero:"676353859", montants:["50","25","55"], ouvert:true, transactions:[]}
 ];
+
+// Liste globale des IDs de transaction déjà utilisés
+const transactionsUtilisees = [];
 
 const adminSection=document.getElementById("adminSection");
 const userSection=document.getElementById("userSection");
@@ -94,11 +95,10 @@ const retourAdmin=document.getElementById("retourAdmin");
 function updateAdminTable(){
   adminTable.innerHTML="";
   abonnés.forEach(a=>{
-    const comptesStr=a.comptes.map(c=>c.fournisseur+": "+c.numero).join(" | ");
     const tr=document.createElement("tr");
     const lien=`javascript:openAbonne('${a.id}')`;
     const btnEtat=a.ouvert?'Ouvert':'Fermé';
-    tr.innerHTML=`<td>${a.entreprise}</td><td>${a.proprietaire}</td><td>${comptesStr}</td><td>${a.montants.join(", ")}</td><td>${a.montants.join(", ")}</td><td>${a.compteur}</td><td>${a.totalDepenses}</td><td><a href="${lien}">Voir</a></td><td>${btnEtat}</td>`;
+    tr.innerHTML=`<td>${a.entreprise}</td><td>${a.proprietaire}</td><td>${a.numero}</td><td>${a.montants.join(", ")}</td><td><a href="${lien}">Voir</a></td><td>${btnEtat}</td>`;
     adminTable.appendChild(tr);
   });
 }
@@ -122,13 +122,18 @@ function openAbonne(id){
 
 function showAbonne(a){
   abonneDetail.classList.remove("hidden");
-  abonneNom.textContent = a.proprietaire;
-  abonneEntreprise.textContent = a.entreprise;
-  abonneProprietaire.textContent = a.proprietaire;
-  abonneComptes.textContent = a.comptes.map(c=>c.fournisseur+": "+c.numero).join(" | ");
-  abonneMontants.textContent = "—"; // Ne pas afficher les montants autorisés
+  abonneNom.textContent=a.proprietaire;
+  abonneEntreprise.textContent=a.entreprise;
+  abonneProprietaire.textContent=a.proprietaire;
+  abonneComptes.textContent=a.numero;
+  abonneMontants.textContent=a.montants.join(", ");
+  abonneNom.dataset.id=a.id;
+  messagePaiement.value="";
+  montantPaiement.value="";
+  msgPaiement.textContent="";
 }
 
+// Recherche abonnés
 searchAbonne.addEventListener("input",()=>{
   const val=searchAbonne.value.toLowerCase();
   abonneList.innerHTML="";
@@ -142,78 +147,43 @@ searchAbonne.addEventListener("input",()=>{
   });
 });
 
-validerPaiement.addEventListener("click", () => {
-  const message = messagePaiement.value.trim();
-  const montant = parseFloat(montantPaiement.value.trim());
-  const ab = abonnés.find(a => a.proprietaire === abonneNom.textContent);
+// Validation paiement
+validerPaiement.addEventListener("click",()=>{
+  const message=messagePaiement.value.trim();
+  const montant=parseFloat(montantPaiement.value.trim());
+  if(!message || !montant){ msgPaiement.textContent="Veuillez remplir message et montant."; return; }
 
-  if (!message || !montant) {
-    msgPaiement.textContent = "Veuillez remplir le message et le montant.";
+  // Extraire ID transaction depuis le message
+  const regex=/transaction\s*id\s*[:\-]?\s*(\d+)/i;
+  const match=message.match(regex);
+  if(!match){ msgPaiement.textContent="ID transaction non trouvé."; return; }
+  const idTransaction=match[1];
+
+  if(transactionsUtilisees.includes(idTransaction)){
+    msgPaiement.textContent="Cette transaction a déjà été utilisée : paiement non valide.";
     return;
   }
 
-  // Regex robuste pour le message Mobile Money
-  const regex = /a\s(.+?)\s\((\+?\d+)\).*transaction Id:\s(\d+)/i;
-  const match = message.match(regex);
-
-  if (!match) {
-    msgPaiement.textContent = "Message Mobile Money invalide.";
+  // Vérifier que le message correspond au nom et numéro de l'abonné sélectionné
+  const ab=abonnés.find(a=>a.id===abonneNom.dataset.id);
+  if(!ab || !message.toLowerCase().includes(ab.proprietaire.toLowerCase()) || !message.includes(ab.numero)){
+    msgPaiement.textContent="Le paiement ne correspond pas à cet abonné.";
     return;
   }
 
-  const [_, nomAbonneMsg, numeroAbonneMsg, idTransaction] = match;
-
-  // Normalisation pour ignorer accents, majuscules, espaces
-  function normalizeStr(str) {
-    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g,'');
-  }
-
-  const nomAbonneNorm = normalizeStr(nomAbonneMsg);
-  const proprietaireNorm = normalizeStr(ab.proprietaire);
-
-  // Vérifie que le prénom et le nom principal correspondent
-  const nomCorrespond = proprietaireNorm.split(/(?=[A-Z])/).every(part => nomAbonneNorm.includes(part) || part.length < 3);
-
-  // Numéro correspond à l’un des comptes
-  const numeroNorm = numeroAbonneMsg.replace(/\D/g,''); // retire tout sauf chiffres
-  const numeroCorrespond = ab.comptes.some(c => c.numero.replace(/\D/g,'') === numeroNorm);
-
-  if (!nomCorrespond || !numeroCorrespond) {
-    msgPaiement.textContent = "Erreur : le paiement ne correspond pas à cet abonné.";
-    return;
-  }
-
-  // Vérification unicité ID de transaction
-  if (ab.transactions.some(t => t.id === idTransaction)) {
-    msgPaiement.textContent = "Transaction déjà utilisée : paiement non valide.";
-    return;
-  }
-
-  // Paiement validé
-  ab.transactions.push({
-    id: idTransaction,
-    montant: montant,
-    message: message,
-    initiatedBy: "user",
-    status: "completed",
-    date: new Date().toLocaleString()
-  });
-
-  ab.compteur += 1;
-  ab.totalDepenses += montant;
-
-  msgPaiement.textContent = `✅ Paiement validé pour ${abonneNom.textContent}`;
-
-  montantPaiement.value = "";
-  messagePaiement.value = "";
-  updateAdminTable();
+  // Valider le paiement
+  transactionsUtilisees.push(idTransaction);
+  ab.transactions.push({id:idTransaction,montant:montant});
+  msgPaiement.textContent=`✅ Paiement validé pour ${ab.proprietaire}`;
+  messagePaiement.value="";
+  montantPaiement.value="";
 });
 
 retourAdmin.addEventListener("click",()=>{
   userSection.classList.add("hidden");
   adminSection.classList.remove("hidden");
+  abonneDetail.classList.add("hidden");
 });
 </script>
-
 </body>
 </html>
