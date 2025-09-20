@@ -3,178 +3,134 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Compte Abonné</title>
+<title>Abonné HelpMoney</title>
 <style>
-  body { font-family: 'Arial', sans-serif; background: linear-gradient(120deg, #c8e6c9, #a5d6a7); margin:0; padding:0; }
-  .container { max-width: 800px; margin: 50px auto; padding: 20px; background: rgba(255,255,255,0.95); border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-  h1,h2 { text-align:center; color:#2e7d32; text-shadow:1px 1px #a5d6a7; }
-  table { width:100%; border-collapse: collapse; margin-bottom:30px; }
-  th,td { padding:12px; text-align:center; border-bottom:1px solid #ddd; }
-  th { background:#43a047; color:white; text-transform:uppercase; }
-  tr:nth-child(even){background:#e8f5e9;}
-  tr:hover{background:#a5d6a7;}
-  input, textarea { padding:10px; border-radius:5px; border:2px solid #2e7d32; transition:0.3s; width: 100%; }
-  button { padding:10px 20px; border:none; border-radius:5px; background:#2e7d32; color:white; font-weight:bold; cursor:pointer; transition:0.3s; margin-top:10px; }
-  .error { color:red; margin-top:10px; text-align:center; }
-  .success { color:green; margin-top:10px; text-align:center; }
+body { font-family: Arial, sans-serif; background:#f0f0f0; margin:0; padding:0; }
+.container { max-width: 800px; margin:50px auto; padding:20px; background:white; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.2); }
+h1 { text-align:center; color:#ff5722; }
+p.error { color:red; font-weight:bold; text-align:center; }
+table { width:100%; border-collapse: collapse; margin-top:20px; }
+th,td { padding:12px; border:1px solid #ddd; text-align:center; }
+th { background:#ff9800; color:white; }
+input,textarea,button { width:100%; padding:10px; margin-top:10px; border-radius:5px; border:1px solid #ff5722; }
+button { background:#ff5722; color:white; font-weight:bold; cursor:pointer; }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>📊 Compte Abonné</h1>
-  <div id="infoContainer"></div>
-
-  <div id="paymentSection" style="display:none;">
-    <h2>Effectuer un Paiement</h2>
-    <p>Collez le message Mobile Money reçu :</p>
-    <textarea id="inputPaiement" rows="4" placeholder="Collez le message"></textarea>
-    <p>Entrez le montant payé :</p>
-    <input type="number" id="inputMontant" placeholder="Montant en FCFA">
-    <button id="verifPaiementBtn">Valider le paiement</button>
-    <p id="msgResult"></p>
-  </div>
+<div class="container" id="container">
+  <h1>Page Abonné</h1>
 </div>
 
 <script>
-  // --- Abonnés ---
-  const abonnés = [
-    { 
-      entreprise:"FACILITATEURS", 
-      proprietaire:["Jean Dupont"], 
-      numero:["655123456"], 
-      fournisseur:["Orange Money"], 
-      montants:["2000","3000"], 
-      id:"123456", 
-      ouvert:true 
-    },
-    { 
-      entreprise:"TECH SOLUTIONS", 
-      proprietaire:["LOVELINE KINYUY WIRNKAR"], 
-      numero:["676353859"], 
-      fournisseur:["MTN MoMo","Orange Money"], 
-      montants:["50","25","55"], 
-      id:"654321", 
-      ouvert:true 
-    },
-    { 
-      entreprise:"ABC ENTERPRISE", 
-      proprietaire:["Paul Etoundi"], 
-      numero:["699112233"], 
-      fournisseur:["Orange Money"], 
-      montants:["2500"], 
-      id:"987654", 
-      ouvert:false 
-    }
-  ];
+// Les mêmes abonnés que dans index.html
+const abonnés = [
+  {
+    entreprise:"FACILITATEURS",
+    proprietaire:["Jean Dupont"],
+    numero:["655123456","677889900"],
+    fournisseur:["Orange Money","MTN MoMo"],
+    montants:["2000","3000"],
+    id:"123456",
+    ouvert:true
+  },
+  {
+    entreprise:"TECH SOLUTIONS",
+    proprietaire:["LOVELINE KINYUY WIRNKAR"],
+    numero:["676353859"],
+    fournisseur:["MTN MoMo"],
+    montants:["50","25","55"],
+    id:"654321",
+    ouvert:true
+  },
+  {
+    entreprise:"ABC ENTERPRISE",
+    proprietaire:["Paul Etoundi"],
+    numero:["699112233"],
+    fournisseur:["Orange Money"],
+    montants:["2500"],
+    id:"987654",
+    ouvert:false
+  }
+];
 
-  const STORAGE_ETAT = "etatPaiements_v2";
-  const STORAGE_TX = "processedTxIds_v2";
+const container = document.getElementById("container");
 
-  const etatPaiements = JSON.parse(localStorage.getItem(STORAGE_ETAT)) || {};
+// Récupérer ID depuis URL
+const urlParams = new URLSearchParams(window.location.search);
+const abonneId = urlParams.get("abonne");
+
+const abonne = abonnés.find(a => a.id === abonneId);
+
+if(!abonne){
+  container.innerHTML = "<p class='error'>Abonné introuvable.</p>";
+} else if(!abonne.ouvert){
+  container.innerHTML = "<p class='error'>Abonné fermé. Les informations sont cachées.</p>";
+} else {
+  // Page abonné affichage
+  const proprietaires = abonne.proprietaire.join(", ");
+  const numeros = abonne.numero.join(", ");
+  const fournisseurs = abonne.fournisseur.join(", ");
+  const montants = abonne.montants.join(", ");
+
+  container.innerHTML += `
+    <p><strong>Entreprise:</strong> ${abonne.entreprise}</p>
+    <p><strong>Propriétaires:</strong> ${proprietaires}</p>
+    <p><strong>Numéros:</strong> ${numeros}</p>
+    <p><strong>Fournisseurs:</strong> ${fournisseurs}</p>
+    <p><strong>Montants autorisés:</strong> ${montants}</p>
+
+    <textarea id="inputPaiement" rows="4" placeholder="Collez le message Mobile Money"></textarea>
+    <input type="number" id="inputMontant" placeholder="Montant payé">
+    <button id="verifPaiementBtn">Valider le paiement</button>
+    <p id="msg"></p>
+  `;
+
+  // Stockage local
+  const STORAGE_TX = "processedTxIds_v1";
   const processedTxIds = JSON.parse(localStorage.getItem(STORAGE_TX)) || {};
 
-  abonnés.forEach(a => {
-    if(!etatPaiements[a.id]){
-      etatPaiements[a.id] = { montantsRestants: [...a.montants], compteur: 0, totalDepenses: 0 };
-    }
-  });
-
-  function saveAll(){
-    localStorage.setItem(STORAGE_ETAT, JSON.stringify(etatPaiements));
-    localStorage.setItem(STORAGE_TX, JSON.stringify(processedTxIds));
-  }
-
-  // --- Récupérer ID depuis URL ---
-  const params = new URLSearchParams(window.location.search);
-  const abonneId = params.get("abonne");
-
-  const container = document.getElementById("infoContainer");
-  const paymentSection = document.getElementById("paymentSection");
   const inputPaiement = document.getElementById("inputPaiement");
   const inputMontant = document.getElementById("inputMontant");
-  const msgResult = document.getElementById("msgResult");
+  const verifPaiementBtn = document.getElementById("verifPaiementBtn");
+  const msg = document.getElementById("msg");
 
-  const abonne = abonnés.find(a => a.id === abonneId);
-
-  if(!abonne || !abonne.ouvert){
-    container.innerHTML = "<p class='error'>Abonné introuvable ou fermé.</p>";
-  } else {
-    // Affichage des infos
-    let html = `<h2>${abonne.entreprise}</h2>`;
-    html += "<table><tr><th>Propriétaire</th><th>Numéros</th><th>Fournisseurs</th><th>Montants restants</th></tr>";
-    html += `<tr>
-      <td>${abonne.proprietaire.join(", ")}</td>
-      <td>${abonne.numero.join(", ")}</td>
-      <td>${abonne.fournisseur.join(", ")}</td>
-      <td>${etatPaiements[abonne.id].montantsRestants.join(", ") || "Aucun"}</td>
-    </tr></table>`;
-    container.innerHTML = html;
-    paymentSection.style.display = "block";
+  function parseAmount(str){
+    return parseFloat(String(str).replace(/[^0-9.]/g,"")) || 0;
   }
 
-  // --- Paiement ---
-  function parseAmountNumber(str){
-    if(!str && str !== 0) return 0;
-    let s = String(str).replace(/\s/g, '').replace(/[^0-9.,-]/g,'').replace(',', '.');
-    const n = parseFloat(s);
-    return isNaN(n) ? 0 : n;
-  }
-
-  function extractTransactionId(messageRaw){
-    return "MSG_" + (new Date().getTime() + Math.floor(Math.random()*10000));
-  }
-
-  document.getElementById("verifPaiementBtn").addEventListener("click", ()=>{
-    const messageRaw = inputPaiement.value.trim();
+  verifPaiementBtn.addEventListener("click", ()=>{
+    const texte = inputPaiement.value.trim();
     const montantUser = inputMontant.value.trim();
 
-    msgResult.textContent = "";
-    msgResult.className = "";
+    if(!texte){ alert("Collez d'abord le message Mobile Money."); return; }
+    if(!montantUser){ alert("Entrez le montant payé."); return; }
 
-    if(!messageRaw){ msgResult.textContent="Collez le message Mobile Money."; msgResult.className="error"; return; }
-    if(!montantUser){ msgResult.textContent="Entrez le montant payé."; msgResult.className="error"; return; }
-
-    // Vérification du nom (au moins un propriétaire)
-    const nomOk = abonne.proprietaire.some(p => messageRaw.toLowerCase().includes(p.toLowerCase().split(" ")[0]));
-    if(!nomOk){ msgResult.textContent="Nom de l'abonné non reconnu."; msgResult.className="error"; return; }
-
-    // Vérification du montant
-    const allowedAmounts = abonne.montants.map(m=>String(m).replace(',', '.'));
-    if(!allowedAmounts.includes(montantUser)){
-      msgResult.textContent=`Montant non autorisé. Montants acceptés : ${abonne.montants.join(", ")}`;
-      msgResult.className="error"; 
-      return;
-    }
-
-    // Vérification doublon
-    const txId = extractTransactionId(messageRaw);
+    // Vérification doublon via hash du message
+    const txId = "TX_" + btoa(texte).slice(0,12);
     if(processedTxIds[txId]){
-      msgResult.textContent="Transaction déjà traitée.";
-      msgResult.className="error";
+      alert("⚠️ Paiement déjà validé.");
       return;
     }
 
-    // Enregistrer paiement
-    const et = etatPaiements[abonne.id];
-    const idxRest = et.montantsRestants.findIndex(m => String(m).replace(',', '.') === montantUser);
-    if(idxRest !== -1){ et.montantsRestants.splice(idxRest,1); }
-    et.compteur = (et.compteur||0)+1;
-    et.totalDepenses = (et.totalDepenses||0)+parseAmountNumber(montantUser);
+    // Vérification nom + montant
+    const nomOK = abonne.proprietaire.some(n => texte.toLowerCase().includes(n.split(" ")[0].toLowerCase()));
+    const montantOK = abonne.montants.includes(montantUser);
+
+    if(!nomOK){
+      alert("Nom de l'abonné non trouvé dans le message.");
+      return;
+    }
+    if(!montantOK){
+      alert(`Montant non autorisé. Montants acceptés : ${abonne.montants.join(", ")}`);
+      return;
+    }
 
     processedTxIds[txId] = { abonneId: abonne.id, montant: montantUser, date: new Date().toISOString() };
-
-    saveAll();
-
-    msgResult.textContent = `✅ Paiement validé — montant: ${montantUser} — txId: ${txId}`;
-    msgResult.className="success";
-
-    // Mettre à jour tableau
-    container.querySelector("td:last-child").textContent = et.montantsRestants.join(", ") || "Aucun";
-
-    // Reset inputs
-    inputPaiement.value=""; inputMontant.value="";
+    localStorage.setItem(STORAGE_TX, JSON.stringify(processedTxIds));
+    alert(`✅ Paiement validé: ${montantUser} FCFA`);
+    inputPaiement.value = ""; inputMontant.value = "";
   });
-
+}
 </script>
 </body>
 </html>
