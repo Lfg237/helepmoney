@@ -3,92 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin HelpMoney</title>
+<title>Compte Marchand - Admin</title>
 <style>
-body { font-family: Arial, sans-serif; background: #f0f0f0; margin:0; padding:0; }
-.container { max-width: 900px; margin: 50px auto; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-h1 { text-align:center; color:#ff5722; }
-table { width:100%; border-collapse: collapse; margin-top:20px; }
-th,td { padding:12px; text-align:center; border:1px solid #ddd; }
-th { background:#ff9800; color:white; }
-tr:nth-child(even){background:#ffe0b2;}
-tr:hover{background:#ffd54f; cursor:pointer;}
-button { padding:8px 15px; background:#ff5722; color:white; border:none; border-radius:5px; cursor:pointer; }
-.opened { background-color: #c8e6c9; }
-.closed { background-color: #ffcdd2; }
+  body { font-family: Arial, sans-serif; background: linear-gradient(120deg, #f6d365, #fda085); margin:0; padding:0; }
+  .container { max-width: 1000px; margin: 50px auto; padding: 20px; background: rgba(255,255,255,0.95); border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+  h1,h2 { text-align:center; color:#ff5722; text-shadow:1px 1px #ffe0b2; }
+  table { width:100%; border-collapse: collapse; margin-bottom:30px; }
+  th,td { padding:12px; text-align:center; border-bottom:1px solid #ddd; }
+  th { background:#ff9800; color:white; text-transform:uppercase; }
+  tr:nth-child(even){background:#ffe0b2;}
+  tr:hover{background:#ffd54f;}
+  input, textarea { padding:10px; border-radius:5px; border:2px solid #ff5722; transition:0.3s; }
+  button { padding:10px 20px; border:none; border-radius:5px; background:#ff5722; color:white; font-weight:bold; cursor:pointer; transition:0.3s; }
+  .error { color:red; margin-top:10px; }
+  .hidden { display:none; }
+  .admin-access { text-align:center; margin-bottom:20px; }
+  .opened { background-color: #c8e6c9; }  /* Vert */
+  .closed { background-color: #ffcdd2; }  /* Rouge */
+  a { text-decoration:none; color:#000; font-weight:bold; }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>📋 Tableau Administrateur</h1>
+  <h1>📊 HelpMoney - Tableau Administrateur</h1>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Entreprise</th>
-        <th>Propriétaires</th>
-        <th>Numéros</th>
-        <th>Fournisseurs</th>
-        <th>Montants</th>
-        <th>État</th>
-        <th>Lien Abonné</th>
-      </tr>
-    </thead>
-    <tbody id="adminTable"></tbody>
-  </table>
+  <!-- Accès admin -->
+  <div class="admin-access">
+    <label for="adminCode">Code Administrateur :</label>
+    <input type="password" id="adminCode" placeholder="Entrez le code">
+    <button id="accessBtn">Accéder</button>
+    <p id="accessMsg" class="error"></p>
+  </div>
+
+  <!-- Tableau admin -->
+  <div id="adminTableContainer" class="hidden">
+    <h2>📋 Liste des Abonnés</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Entreprise</th>
+          <th>Propriétaires</th>
+          <th>Numéros</th>
+          <th>Fournisseurs</th>
+          <th>Montants</th>
+          <th>État</th>
+          <th>Voir</th>
+        </tr>
+      </thead>
+      <tbody id="adminTable"></tbody>
+    </table>
+  </div>
 </div>
 
 <script>
-// Liste des abonnés
-const abonnés = [
+const ADMIN_CODE = "233233";
+
+// Exemple abonnés
+const abonnes = [
   {
-    entreprise:"FACILITATEURS",
-    proprietaire:["Jean Dupont"],
-    numero:["655123456","677889900"],
-    fournisseur:["Orange Money","MTN MoMo"],
-    montants:["2000","3000"],
-    id:"123456",
-    ouvert:true
+    id: "123456",
+    entreprise: "FACILITATEURS",
+    proprietaire: ["Jean Dupont"],
+    numero: ["655123456","676789012"],
+    fournisseur: ["Orange Money", "MTN MoMo"],
+    montants: ["2000","3000"],
+    ouvert: true
   },
   {
-    entreprise:"TECH SOLUTIONS",
-    proprietaire:["LOVELINE KINYUY WIRNKAR"],
-    numero:["676353859"],
-    fournisseur:["MTN MoMo"],
-    montants:["50","25","55"],
-    id:"654321",
-    ouvert:true
+    id: "654321",
+    entreprise: "TECH SOLUTIONS",
+    proprietaire: ["LOVELINE KINYUY WIRNKAR"],
+    numero: ["676353859"],
+    fournisseur: ["MTN MoMo"],
+    montants: ["50","25","55"],
+    ouvert: false
   },
   {
-    entreprise:"ABC ENTERPRISE",
-    proprietaire:["Paul Etoundi"],
-    numero:["699112233"],
-    fournisseur:["Orange Money"],
-    montants:["2500"],
-    id:"987654",
-    ouvert:false
+    id: "987654",
+    entreprise: "ABC ENTERPRISE",
+    proprietaire: ["Paul Etoundi"],
+    numero: ["699112233"],
+    fournisseur: ["Orange Money"],
+    montants: ["2500"],
+    ouvert: true
   }
 ];
 
+const accessBtn = document.getElementById("accessBtn");
+const adminCodeInput = document.getElementById("adminCode");
+const accessMsg = document.getElementById("accessMsg");
+const adminTableContainer = document.getElementById("adminTableContainer");
 const adminTable = document.getElementById("adminTable");
 
-function fillAdminTable(){
+function updateAdminTable() {
   adminTable.innerHTML = "";
-  abonnés.forEach(a => {
+  abonnes.forEach(a => {
     const tr = document.createElement("tr");
     tr.className = a.ouvert ? "opened" : "closed";
-    const proprietaires = a.proprietaire.join(", ");
-    const numeros = a.numero.join(", ");
-    const fournisseurs = a.fournisseur.join(", ");
-    const montants = a.montants.join(", ");
     const etat = a.ouvert ? "Ouvert" : "Fermé";
-    const lien = a.ouvert ? `<a href="abonne.html?abonne=${a.id}" target="_blank">Voir</a>` : "—";
+    const lien = a.ouvert
+      ? `<a href="abonne.html?abonne=${a.id}" target="_blank">Voir</a>`
+      : "—";
     tr.innerHTML = `
       <td>${a.entreprise}</td>
-      <td>${proprietaires}</td>
-      <td>${numeros}</td>
-      <td>${fournisseurs}</td>
-      <td>${montants}</td>
+      <td>${a.proprietaire.join(", ")}</td>
+      <td>${a.numero.join(", ")}</td>
+      <td>${a.fournisseur.join(", ")}</td>
+      <td>${a.montants.join(", ")}</td>
       <td>${etat}</td>
       <td>${lien}</td>
     `;
@@ -96,7 +117,19 @@ function fillAdminTable(){
   });
 }
 
-fillAdminTable();
+accessBtn.addEventListener("click", () => {
+  const code = adminCodeInput.value.trim();
+  if(code === ADMIN_CODE){
+    accessMsg.textContent = "Accès Admin validé !";
+    accessMsg.style.color = "green";
+    adminTableContainer.classList.remove("hidden");
+    updateAdminTable();
+  } else {
+    accessMsg.textContent = "Code incorrect !";
+    accessMsg.style.color = "red";
+    adminTableContainer.classList.add("hidden");
+  }
+});
 </script>
 </body>
 </html>
