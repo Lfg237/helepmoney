@@ -3,237 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Compte marchand - Admin</title>
+<title>HelpMoney - Administration</title>
 <style>
-body { font-family: 'Arial', sans-serif; background: linear-gradient(120deg, #f6d365, #fda085); margin:0; padding:0; }
-.container { max-width: 1000px; margin: 50px auto; padding: 20px; background: rgba(255,255,255,0.95); border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-h1,h2 { text-align:center; color:#ff5722; text-shadow:1px 1px #ffe0b2; }
-table { width:100%; border-collapse: collapse; margin-bottom:30px; }
-th,td { padding:12px; text-align:center; border-bottom:1px solid #ddd; }
-th { background:#ff9800; color:white; text-transform:uppercase; }
-tr:nth-child(even){background:#ffe0b2;}
-tr:hover{background:#ffd54f;}
-input, textarea { padding:10px; border-radius:5px; border:2px solid #ff5722; transition:0.3s; }
-button { padding:10px 20px; border:none; border-radius:5px; background:#ff5722; color:white; font-weight:bold; cursor:pointer; transition:0.3s; }
-.error { color:red; margin-top:10px; }
-.hidden { display:none; }
-.admin-access, .payment-section { text-align:center; margin-bottom:20px; }
+body{font-family:'Arial',sans-serif;background:linear-gradient(120deg,#f6d365,#fda085);margin:0;padding:0;}
+.container{max-width:900px;margin:50px auto;padding:20px;background:rgba(255,255,255,0.95);border-radius:15px;box-shadow:0 8px 20px rgba(0,0,0,0.2);}
+h1{text-align:center;color:#ff5722;text-shadow:1px 1px #ffe0b2;}
+input,button{width:100%;padding:10px;margin-bottom:10px;border-radius:5px;border:2px solid #ff5722;}
+button{background:#ff5722;color:white;cursor:pointer;border:none;font-weight:bold;}
+.error{color:red;text-align:center;}
+.success{color:green;text-align:center;}
+table{width:100%;border-collapse:collapse;margin-top:20px;}
+th,td{padding:8px;text-align:center;border:1px solid #ddd;}
+th{background:#ff9800;color:white;}
 </style>
 </head>
 <body>
-
 <div class="container">
-<h1>📊 HelepMoney - Administration</h1>
-
-<!-- Accès admin -->
-<div class="admin-access">
-<label for="adminCode">Code Administrateur :</label>
-<input type="password" id="adminCode" placeholder="Entrez le code">
+<h1>📋 Tableau Administrateur</h1>
+<label>Code Admin :</label>
+<input type="password" id="adminCode">
 <button id="accessBtn">Accéder</button>
-<p id="accessMsg" class="error"></p>
-</div>
-
-<!-- Tableau admin -->
-<div id="adminTableContainer" class="hidden">
-<h2>📋 Tableau Administrateur</h2>
+<p id="accessMsg"></p>
 <table>
-  <thead>
-    <tr>
-      <th>Entreprise</th>
-      <th>Propriétaire</th>
-      <th>Numéros</th>
-      <th>Fournisseur</th>
-      <th>Montants acceptés</th>
-      <th>Montants restants</th>
-      <th>Paiements validés</th>
-      <th>Total reçu</th>
-      <th>Lien utilisateur</th>
-    </tr>
-  </thead>
-  <tbody id="adminTable"></tbody>
+<thead>
+<tr>
+<th>Entreprise</th>
+<th>Propriétaires</th>
+<th>Comptes</th>
+<th>Montants</th>
+<th>Montants restants</th>
+<th>Paiements validés</th>
+<th>Total reçu</th>
+<th>Lien unique</th>
+<th>Ouvert/Fermé</th>
+</tr>
+</thead>
+<tbody id="adminTable"></tbody>
 </table>
 </div>
-
-<!-- Page utilisateur -->
-<div class="container hidden" id="userPage">
-<h1>📊 Paiement pour <span id="userEntreprise"></span></h1>
-<p><strong>Propriétaire :</strong> <span id="userProprietaire"></span></p>
-<p><strong>Numéros :</strong> <span id="userNumeros"></span></p>
-<p><strong>Fournisseur :</strong> <span id="userFournisseur"></span></p>
-<p><strong>Montants autorisés :</strong> <span id="userMontants"></span></p>
-<p>Collez le message reçu après votre paiement :</p>
-<textarea id="inputPaiement" rows="4" placeholder="Collez le message Mobile Money"></textarea>
-<p>Montant (optionnel si paiement libre) :</p>
-<input type="number" id="inputMontant" placeholder="Montant en FCFA">
-<button id="verifPaiementBtn">Valider le paiement</button>
-</div>
-
 <script>
-const ADMIN_CODE = "233233";
-
-// Abonnés avec plusieurs numéros
-const abonnés = [
-  { entreprise:"FACILITATEURS", proprietaire:"Jean Dupont", numero:["655123456","677889900"], fournisseur:"Orange Money", montants:["2000","3000"], id:"123456" },
-  { entreprise:"TECH SOLUTIONS", proprietaire:"LOVELINE KINYUY WIRNKAR", numero:["676353859","699001122"], fournisseur:"MTN MoMo", montants:["50","25","55"], id:"654321" },
-  { entreprise:"ABC ENTERPRISE", proprietaire:"Paul Etoundi", numero:["699112233"], fournisseur:"Orange Money", montants:["2500"], id:"987654" }
+const ADMIN_CODE="233233";
+const abonnés=[
+  {entreprise:"FACILITATEURS",proprietaires:["Jean Dupont"],comptes:[{numero:"655123456",fournisseur:"Orange Money"},{numero:"677889900",fournisseur:"MTN MoMo"}],montants:["2000","3000"],id:"123456",ouvert:true},
+  {entreprise:"TECH SOLUTIONS",proprietaires:["LOVELINE KINYUY WIRNKAR"],comptes:[{numero:"676353859",fournisseur:"MTN MoMo"},{numero:"699001122",fournisseur:"Orange Money"}],montants:["50","25","55"],id:"654321",ouvert:false}
 ];
+const STORAGE_ETAT="etatPaiements_v3";
+const STORAGE_TX="processedTxIds_v3";
+const etatPaiements=JSON.parse(localStorage.getItem(STORAGE_ETAT))||{};
+const processedTxIds=JSON.parse(localStorage.getItem(STORAGE_TX))||{};
+abonnés.forEach(a=>{if(!etatPaiements[a.id])etatPaiements[a.id]={montantsRestants:[...a.montants],compteur:0,totalDepenses:0};});
 
-// Stockage
-const STORAGE_ETAT = "etatPaiements_v1";
-const STORAGE_TX = "processedTxIds_v1";
-const etatPaiements = JSON.parse(localStorage.getItem(STORAGE_ETAT)) || {};
-const processedTxIds = JSON.parse(localStorage.getItem(STORAGE_TX)) || {};
-
-// Initialiser mémoire
-abonnés.forEach(a=>{
-  if(!etatPaiements[a.id]){
-    etatPaiements[a.id] = { montantsRestants:[...a.montants], compteur:0, totalDepenses:0 };
-  }
-});
-
-function saveAll(){
-  localStorage.setItem(STORAGE_ETAT, JSON.stringify(etatPaiements));
-  localStorage.setItem(STORAGE_TX, JSON.stringify(processedTxIds));
-}
-
-// ---- ADMIN ----
-const accessBtn = document.getElementById("accessBtn");
-const adminCodeInput = document.getElementById("adminCode");
-const accessMsg = document.getElementById("accessMsg");
-const adminTableContainer = document.getElementById("adminTableContainer");
-const adminTable = document.getElementById("adminTable");
-
-accessBtn.addEventListener("click", ()=>{
-  if(adminCodeInput.value.trim() === ADMIN_CODE){
-    accessMsg.textContent="Accès Admin validé !"; accessMsg.style.color="green";
-    adminTableContainer.classList.remove("hidden"); updateAdminTable();
-  } else {
-    accessMsg.textContent="Code incorrect !"; accessMsg.style.color="red";
-    adminTableContainer.classList.add("hidden");
-  }
-});
+const accessBtn=document.getElementById("accessBtn");
+const adminCodeInput=document.getElementById("adminCode");
+const accessMsg=document.getElementById("accessMsg");
+const adminTable=document.getElementById("adminTable");
 
 function updateAdminTable(){
   adminTable.innerHTML="";
   abonnés.forEach(a=>{
-    const et = etatPaiements[a.id];
-    const tr = document.createElement("tr");
-    const userLink = `${window.location.href.split("?")[0]}?abonne=${a.id}`;
-    tr.innerHTML=`
-      <td>${a.entreprise}</td>
-      <td>${a.proprietaire}</td>
-      <td>${a.numero.join(", ")}</td>
-      <td>${a.fournisseur}</td>
-      <td>${a.montants.join(", ")}</td>
-      <td>${et.montantsRestants.join(", ") || "Aucun"}</td>
-      <td>${et.compteur}</td>
-      <td>${et.totalDepenses}</td>
-      <td><a href="${userLink}" target="_blank">Lien utilisateur</a></td>
-    `;
+    const et=etatPaiements[a.id];
+    const comptesStr=a.comptes.map(c=>c.fournisseur+": "+c.numero).join(" | ");
+    const proprStr=a.proprietaires.join(", ");
+    const lien=`abonne.html?abonne=${a.id}`;
+    const btnOuvert=`<button onclick="toggleAbonne('${a.id}')">${a.ouvert?'Fermer':'Ouvrir'}</button>`;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${a.entreprise}</td><td>${proprStr}</td><td>${comptesStr}</td><td>${a.montants.join(", ")}</td><td>${et.montantsRestants.join(", ")||"Aucun"}</td><td>${et.compteur}</td><td>${et.totalDepenses}</td><td><a href="${lien}" target="_blank">Lien abonné</a></td><td>${btnOuvert}</td>`;
     adminTable.appendChild(tr);
   });
 }
 
-// ---- USER PAGE ----
-const urlParams = new URLSearchParams(window.location.search);
-const abonneId = urlParams.get('abonne');
-const abonne = abonnés.find(a=>a.id===abonneId);
-
-if(abonne){
-  document.getElementById("userPage").classList.remove("hidden");
-  document.getElementById("userEntreprise").textContent = abonne.entreprise;
-  document.getElementById("userProprietaire").textContent = abonne.proprietaire;
-  document.getElementById("userNumeros").textContent = abonne.numero.join(", ");
-  document.getElementById("userFournisseur").textContent = abonne.fournisseur;
-  document.getElementById("userMontants").textContent = abonne.montants.join(", ");
-
-  const verifPaiementBtn = document.getElementById("verifPaiementBtn");
-  const inputPaiement = document.getElementById("inputPaiement");
-  const inputMontant = document.getElementById("inputMontant");
-
-  function parseAmountNumber(str){
-    if(!str && str!==0) return 0;
-    let s = String(str).replace(/\s/g,'').replace(/[^0-9.,-]/g,'').replace(',','.');
-    const n=parseFloat(s); return isNaN(n)?0:n;
-  }
-
-  function extractTransactionId(messageRaw){
-    const transMatch = messageRaw.match(/transaction\s+id[:\-]?\s*([0-9A-Za-z\-]{6,})/i);
-    if(transMatch && transMatch[1]) return transMatch[1];
-    const labeled = messageRaw.match(/\b(?:réf(?:érence)?|ref|trx|trn|id|code|n[°º]|no)\s*[:\-]?\s*([A-Za-z0-9\-]{4,})\b/i);
-    if(labeled && labeled[1] && labeled[1]!=="0") return labeled[1];
-    return "MSG_"+Date.now();
-  }
-
-  function verifierMessageUtilisateur(messageRaw, montantUser){
-    const txId = extractTransactionId(messageRaw);
-
-    if(processedTxIds[txId]){
-      alert(`⚠️ Transaction déjà traitée (id=${txId})`);
-      return;
-    }
-
-    // Vérification nom
-    const nomOK = messageRaw.toLowerCase().includes(abonne.proprietaire.toLowerCase().split(" ")[0]);
-    if(!nomOK){ alert("Nom non reconnu dans le message."); return; }
-
-    // Vérification montant
-    const allowedAmounts = abonne.montants.map(m=>String(m).replace(',','.'));
-    if(!allowedAmounts.includes(montantUser)){
-      alert(`❌ Montant non autorisé. Montants acceptés : ${abonne.montants.join(", ")}`);
-      return;
-    }
-
-    const et = etatPaiements[abonne.id];
-    const idxRest = et.montantsRestants.findIndex(m=>String(m).replace(',','.')===montantUser);
-    if(idxRest!==-1) et.montantsRestants.splice(idxRest,1);
-
-    et.compteur++; et.totalDepenses += parseAmountNumber(montantUser);
-    processedTxIds[txId] = { abonneId: abonne.id, montant: montantUser, date: new Date().toISOString() };
-    saveAll(); updateAdminTable();
-    alert(`✅ Paiement validé pour ${abonne.entreprise} — montant: ${montantUser}`);
-  }
-
-  function verifierMessageSysteme(messageRaw){
-    const txId = extractTransactionId(messageRaw);
-
-    if(processedTxIds[txId]){
-      alert(`⚠️ Transaction déjà traitée (id=${txId})`);
-      return;
-    }
-
-    const messageLower = messageRaw.toLowerCase();
-    const numeroOK = abonne.numero.some(n => messageLower.includes(n.slice(-9)));
-    const nomOK = messageLower.includes(abonne.proprietaire.toLowerCase().split(" ")[0]);
-    if(!numeroOK || !nomOK){ alert("Message invalide pour le système."); return; }
-
-    const messageNumbers = (messageRaw.match(/[\d]+(?:[.,]\d+)?/g) || []).map(n=>n.replace(',','.'));
-    const allowedAmounts = abonne.montants.map(m=>String(m).replace(',','.'));
-    let matchedAmount = messageNumbers.find(n=>allowedAmounts.includes(n));
-    if(!matchedAmount){ alert(`❌ Aucun montant autorisé trouvé. Montants acceptés : ${abonne.montants.join(", ")}`); return; }
-
-    const et = etatPaiements[abonne.id];
-    const idxRest = et.montantsRestants.findIndex(m=>String(m).replace(',','.')===matchedAmount);
-    if(idxRest!==-1) et.montantsRestants.splice(idxRest,1);
-
-    et.compteur++; et.totalDepenses += parseAmountNumber(matchedAmount);
-    processedTxIds[txId] = { abonneId: abonne.id, montant: matchedAmount, date: new Date().toISOString() };
-    saveAll(); updateAdminTable();
-    alert(`✅ Paiement validé pour ${abonne.entreprise} — montant: ${matchedAmount}`);
-  }
-
-  verifPaiementBtn.addEventListener("click", ()=>{
-    const messageRaw = inputPaiement.value.trim();
-    const montantUser = inputMontant.value.trim();
-    if(!messageRaw){ alert("Collez d'abord le message."); return; }
-    if(montantUser) verifierMessageUtilisateur(messageRaw,montantUser);
-    else verifierMessageSysteme(messageRaw);
-  });
+window.toggleAbonne=function(id){
+  const ab=abonnés.find(a=>a.id===id);
+  if(!ab)return;
+  ab.ouvert=!ab.ouvert;
+  localStorage.setItem("abonnés_ouvertures",JSON.stringify(abonnés.map(a=>({id:a.id,ouvert:a.ouvert}))));
+  updateAdminTable();
 }
 
-// Init tableau admin
-updateAdminTable();
+accessBtn.addEventListener("click",()=>{
+  if(adminCodeInput.value.trim()===ADMIN_CODE){ accessMsg.textContent="✅ Accès autorisé"; accessMsg.className="success"; updateAdminTable(); }
+  else{ accessMsg.textContent="❌ Code incorrect"; accessMsg.className="error"; }
+});
 
+const abonnésOuvertures=JSON.parse(localStorage.getItem("abonnés_ouvertures"))||[];
+abonnésOuvertures.forEach(o=>{const ab=abonnés.find(a=>a.id===o.id); if(ab) ab.ouvert=o.ouvert;});
 </script>
 </body>
 </html>
