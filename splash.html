@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HelepMoney</title>
+  <style>
+    /* Fullscreen splash */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ff5722;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      flex-direction: column;
+    }
+
+    /* Logo */
+    .logo {
+      width: 150px;
+      height: 150px;
+      background: url('/icons/icon-512.png') no-repeat center center;
+      background-size: contain;
+      margin-bottom: 20px;
+      animation: spin 2s linear infinite; /* Optionnel : animation */
+    }
+
+    /* Texte */
+    h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    p {
+      font-size: 16px;
+      margin-top: 5px;
+    }
+
+    /* Animation du logo */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="logo"></div>
+  <h1>HelepMoney</h1>
+  <p>Chargement en cours...</p>
+
+  <script>
+    // Redirection vers la page principale après 2 secondes
+    setTimeout(() => {
+      window.location.href = "/?abonne=A001";
+    }, 2000);
+  </script>
+</body>
+</html>
