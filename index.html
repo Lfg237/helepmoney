@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HelepMoney</title>
+
+<!-- 🔗 Lien vers le manifest PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#ff5722">
+
 <style>
 body{font-family:'Arial',sans-serif;background:linear-gradient(120deg,#f6d365,#fda085);margin:0;padding:0;}
 .container{max-width:900px;margin:30px auto;padding:20px;background:rgba(255,255,255,0.95);border-radius:15px;box-shadow:0 8px 20px rgba(0,0,0,0.2);}
@@ -23,7 +28,10 @@ li{padding:5px;background:#ffd54f;margin:3px 0;border-radius:5px;}
 #bandeTexte {
   display:inline-block;
   padding-left:100%;
-  animation: defilement 70s linear infinite;
+  animation: defilement 15s linear infinite;
+  color:white;
+  font-weight:bold;
+  font-size:16px;
 }
 @keyframes defilement {
   0% { transform: translateX(0); }
@@ -57,8 +65,8 @@ li{padding:5px;background:#ffd54f;margin:3px 0;border-radius:5px;}
 <!-- Section Utilisateur -->
 <div class="container hidden" id="userSection">
   <!-- Bande annonce horizontale -->
-  <div id="bandeAnnonce" style="width:100%;overflow:hidden;background:#ff9800;color:white;padding:10px 0;font-weight:bold;white-space:nowrap;box-sizing:border-box;">
-    <span id="bandeTexte">💥PROMO💰 📝création de compte gratuit 😳 durée de la promo une semaine ⏰– Bienvenue sur HelepMoney ! partagez vos infos de paiement sur toute les plateformes numériques 💰monetisez vos sites web ,liens et groupe whatsapp  en toute sécurité, encaisser facilement ☎️infoline : what's et ayoba 670035609  ! </span>
+  <div id="bandeAnnonce" style="width:100%;overflow:hidden;background:#ff9800;padding:10px 0;white-space:nowrap;box-sizing:border-box;">
+    <span id="bandeTexte">🟠 Promotion 🟣 – Bienvenue sur HelepMoney ! Partagez vos infos de paiement sur toutes les plateformes, monétisez vos sites web, liens et groupes WhatsApp 🔥 Infoline: 670035609</span>
   </div>
 
 <h1><b>HelepMoney</b></h1>
@@ -80,12 +88,12 @@ li{padding:5px;background:#ffd54f;margin:3px 0;border-radius:5px;}
 <script>
 const ADMIN_CODE = "233233";
 
-// 20 abonnés avec OM et MoMo, certains fermés
+// 21 abonnés avec OM et MoMo
 const abonnés = [
   {id:"A001", entreprise:"Boutique Alpha", proprietaire:"Jean Dupont", numeros:{om:"690112233", momo:"677889900"}, ouvert:true, transactions:[]},
   {id:"A002", entreprise:"Maçonnerie BTP", proprietaire:"Kegni Ismaël", numeros:{om:"656207273", momo:"674556677"}, ouvert:true, transactions:[]},
-  {id:"A003", entreprise:" ras", proprietaire:"Mengue Emmanuel", numeros:{om:"655667566", momo:"ras"}, ouvert:true, transactions:[]}, 
-  {id:"A004", entreprise:"ras", proprietaire:"Mohamadou Laminou", numeros:{om:"ras", momo:"650526285"}, ouvert:true, transactions:[]},
+  {id:"A003", entreprise:"Superette Soleil", proprietaire:"Paul Messi", numeros:{om:"690334455", momo:"678990011"}, ouvert:false, transactions:[]}, 
+  {id:"A004", entreprise:"Pharmacie Centrale", proprietaire:"Alice Ndongo", numeros:{om:"691223344", momo:"675443322"}, ouvert:true, transactions:[]},
   {id:"A005", entreprise:"Taxi Express", proprietaire:"Serge Kameni", numeros:{om:"692334455", momo:"676554433"}, ouvert:true, transactions:[]},
   {id:"A006", entreprise:"Boulangerie Pain Chaud", proprietaire:"Marie Claire", numeros:{om:"693445566", momo:"679112233"}, ouvert:false, transactions:[]}, 
   {id:"A007", entreprise:"Station Service Petro", proprietaire:"Didier Etame", numeros:{om:"694556677", momo:"674221100"}, ouvert:true, transactions:[]},
@@ -102,8 +110,10 @@ const abonnés = [
   {id:"A018", entreprise:"Boucherie Viande Fraîche", proprietaire:"André Biyaga", numeros:{om:"695778899", momo:"678221133"}, ouvert:true, transactions:[]},
   {id:"A019", entreprise:"Snack Bar Chill", proprietaire:"Victor Essono", numeros:{om:"696889900", momo:"679334455"}, ouvert:true, transactions:[]},
   {id:"A020", entreprise:"Pressing Propre", proprietaire:"Odile Nana", numeros:{om:"697990011", momo:"674556600"}, ouvert:true, transactions:[]},
-   {id:"A021", entreprise:"aucune", proprietaire:"loveline kinyuy wirnkar", numeros:{om:"697990011", momo:"676353859"}, ouvert:true, transactions:[]}
+  {id:"A021", entreprise:"aucune", proprietaire:"Loveline Kinyuy Wirnkar", numeros:{om:"697990011", momo:"676353859"}, ouvert:true, transactions:[]}
 ];
+
+const transactionsUtilisees = []; // IDs transaction globales
 
 const adminSection = document.getElementById("adminSection");
 const userSection = document.getElementById("userSection");
@@ -152,7 +162,7 @@ accessBtn.addEventListener("click", ()=>{
 
 // Afficher abonné
 function showAbonne(a){
-  if(!a.ouvert) return; // abonné fermé, ne rien faire
+  if(!a.ouvert) return; // abonné fermé
   abonneDetail.classList.remove("hidden");
   abonneNom.textContent = a.proprietaire;
   abonneEntreprise.textContent = a.entreprise;
@@ -180,16 +190,35 @@ searchAbonne.addEventListener("input", ()=>{
           });
 });
 
-// Validation paiement
+// Validation paiement avec ID transaction unique global
 validerPaiement.addEventListener("click", ()=>{
   const message = messagePaiement.value.trim();
   if(!message){ msgPaiement.textContent="Veuillez coller le message MoMo."; return; }
+
   const ab = abonnés.find(a => a.id === abonneNom.dataset.id);
   if(!ab){ msgPaiement.textContent="Abonné introuvable."; return; }
+
+  // Vérifier correspondance propriétaire et numéro
   if(!message.toLowerCase().includes(ab.proprietaire.toLowerCase()) || (!message.includes(ab.numeros.om) && !message.includes(ab.numeros.momo))){
     msgPaiement.textContent="Le paiement ne correspond pas à cet abonné."; return;
   }
-  msgPaiement.textContent=`✅ Paiement validé pour ${ab.proprietaire}`;
+
+  // Extraire ID transaction
+  const regex = /transaction\s*id\s*[:\-]?\s*(\d+)/i;
+  const match = message.match(regex);
+  if(!match){ msgPaiement.textContent="ID transaction non trouvé."; return; }
+  const idTransaction = match[1];
+
+  // Vérifier si transaction déjà utilisée globalement
+  if(transactionsUtilisees.includes(idTransaction)){
+    msgPaiement.textContent= "Cette transaction a déjà été utilisée : paiement non valide."; 
+    return; 
+  }
+
+  // Valider le paiement
+  transactionsUtilisees.push(idTransaction);
+  ab.transactions.push({id: idTransaction});
+  msgPaiement.textContent = `✅ Paiement validé pour ${ab.proprietaire}`;
   messagePaiement.value = "";
 });
 
@@ -210,5 +239,15 @@ window.addEventListener("load", ()=>{
   }
 });
 </script>
+
+<!-- 🔧 Enregistrement du Service Worker -->
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js")
+    .then(() => console.log("✅ Service Worker enregistré"))
+    .catch(err => console.error("❌ Erreur Service Worker :", err));
+}
+</script>
+
 </body>
 </html>
