@@ -64,7 +64,6 @@ li{padding:5px;background:#ffd54f;margin:3px 0;border-radius:5px;}
 
 <!-- Section Utilisateur -->
 <div class="container hidden" id="userSection">
-  <!-- Bande annonce horizontale -->
   <div id="bandeAnnonce" style="width:100%;overflow:hidden;background:#ff9800;padding:10px 0;white-space:nowrap;box-sizing:border-box;">
     <span id="bandeTexte">🟠 Promotion 🟣 – Bienvenue sur HelepMoney ! Partagez vos infos de paiement sur toutes les plateformes, monétisez vos sites web, liens et groupes WhatsApp 🔥 Infoline: 670035609</span>
   </div>
@@ -88,7 +87,7 @@ li{padding:5px;background:#ffd54f;margin:3px 0;border-radius:5px;}
 <script>
 const ADMIN_CODE = "233233";
 
-// 21 abonnés avec OM et MoMo
+// Liste des abonnés
 const abonnés = [
   {id:"A001", entreprise:"Boutique Alpha", proprietaire:"Jean Dupont", numeros:{om:"690112233", momo:"677889900"}, ouvert:true, transactions:[]},
   {id:"A002", entreprise:"Maçonnerie BTP", proprietaire:"Kegni Ismaël", numeros:{om:"656207273", momo:"674556677"}, ouvert:true, transactions:[]},
@@ -113,8 +112,7 @@ const abonnés = [
   {id:"A021", entreprise:"aucune", proprietaire:"Loveline Kinyuy Wirnkar", numeros:{om:"697990011", momo:"676353859"}, ouvert:true, transactions:[]}
 ];
 
-const transactionsUtilisees = []; // IDs transaction globales
-
+const transactionsUtilisees = [];
 const adminSection = document.getElementById("adminSection");
 const userSection = document.getElementById("userSection");
 const adminTable = document.getElementById("adminTable");
@@ -133,23 +131,15 @@ const validerPaiement = document.getElementById("validerPaiement");
 const msgPaiement = document.getElementById("msgPaiement");
 const retourAdmin = document.getElementById("retourAdmin");
 
-// Admin Table
+// Mise à jour table admin
 function updateAdminTable(){
   adminTable.innerHTML = "";
   abonnés.forEach(a => {
     const lien = `?abonne=${a.id}`;
     const btnEtat = a.ouvert ? 'Ouvert' : 'Fermé';
-    const lienHTML = a.ouvert 
-      ? `<a href="${lien}">Voir</a>` 
-      : `<span style="color:gray;cursor:not-allowed;">Voir</span>`;
+    const lienHTML = a.ouvert ? `<a href="${lien}">Voir</a>` : `<span style="color:gray;cursor:not-allowed;">Voir</span>`;
     const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${a.entreprise}</td>
-      <td>${a.proprietaire}</td>
-      <td>OM:${a.numeros.om} | MoMo:${a.numeros.momo}</td>
-      <td>${lienHTML}</td>
-      <td>${btnEtat}</td>
-    `;
+    tr.innerHTML = `<td>${a.entreprise}</td><td>${a.proprietaire}</td><td>OM:${a.numeros.om} | MoMo:${a.numeros.momo}</td><td>${lienHTML}</td><td>${btnEtat}</td>`;
     adminTable.appendChild(tr);
   });
 }
@@ -162,7 +152,7 @@ accessBtn.addEventListener("click", ()=>{
 
 // Afficher abonné
 function showAbonne(a){
-  if(!a.ouvert) return; // abonné fermé
+  if(!a.ouvert) return;
   abonneDetail.classList.remove("hidden");
   abonneNom.textContent = a.proprietaire;
   abonneEntreprise.textContent = a.entreprise;
@@ -190,32 +180,20 @@ searchAbonne.addEventListener("input", ()=>{
           });
 });
 
-// Validation paiement avec ID transaction unique global
+// Valider paiement
 validerPaiement.addEventListener("click", ()=>{
   const message = messagePaiement.value.trim();
   if(!message){ msgPaiement.textContent="Veuillez coller le message MoMo."; return; }
-
   const ab = abonnés.find(a => a.id === abonneNom.dataset.id);
   if(!ab){ msgPaiement.textContent="Abonné introuvable."; return; }
-
-  // Vérifier correspondance propriétaire et numéro
   if(!message.toLowerCase().includes(ab.proprietaire.toLowerCase()) || (!message.includes(ab.numeros.om) && !message.includes(ab.numeros.momo))){
     msgPaiement.textContent="Le paiement ne correspond pas à cet abonné."; return;
   }
-
-  // Extraire ID transaction
   const regex = /transaction\s*id\s*[:\-]?\s*(\d+)/i;
   const match = message.match(regex);
   if(!match){ msgPaiement.textContent="ID transaction non trouvé."; return; }
   const idTransaction = match[1];
-
-  // Vérifier si transaction déjà utilisée globalement
-  if(transactionsUtilisees.includes(idTransaction)){
-    msgPaiement.textContent= "Cette transaction a déjà été utilisée : paiement non valide."; 
-    return; 
-  }
-
-  // Valider le paiement
+  if(transactionsUtilisees.includes(idTransaction)){ msgPaiement.textContent= "Cette transaction a déjà été utilisée : paiement non valide."; return; }
   transactionsUtilisees.push(idTransaction);
   ab.transactions.push({id: idTransaction});
   msgPaiement.textContent = `✅ Paiement validé pour ${ab.proprietaire}`;
@@ -229,25 +207,20 @@ retourAdmin.addEventListener("click", ()=>{
   abonneDetail.classList.add("hidden");
 });
 
-// Ouvrir via URL
+// Ouvrir par défaut abonné A001
 window.addEventListener("load", ()=>{
   const params = new URLSearchParams(window.location.search);
-  const idAbonne = params.get("abonne");
-  if(idAbonne){
-    const ab = abonnés.find(a => a.id === idAbonne);
-    if(ab && ab.ouvert) showAbonne(ab);
-  }
+  let idAbonne = params.get("abonne") || "A001"; // par défaut A001
+  const ab = abonnés.find(a => a.id === idAbonne);
+  if(ab && ab.ouvert) showAbonne(ab);
 });
-</script>
 
-<!-- 🔧 Enregistrement du Service Worker -->
-<script>
+// Enregistrement Service Worker
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js")
-    .then(() => console.log("✅ Service Worker enregistré"))
+    .then(()=> console.log("✅ Service Worker enregistré"))
     .catch(err => console.error("❌ Erreur Service Worker :", err));
 }
 </script>
-
 </body>
 </html>
