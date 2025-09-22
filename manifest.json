@@ -1,4 +1,5 @@
 {
+  "id": "com.helep.helepMoney",
   "name": "HelepMoney",
   "short_name": "HelepMoney",
   "description": "Gérez et vérifiez facilement les paiements Mobile Money de vos abonnés. Suivi sécurisé et rapide pour entreprises et particuliers.",
@@ -6,6 +7,8 @@
   "display": "standalone",
   "background_color": "#ff5722",
   "theme_color": "#ff5722",
+  "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
       "src": "/icon-192.png",
