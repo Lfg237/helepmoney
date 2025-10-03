@@ -1,228 +1,135 @@
-de<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HelepMoney</title>
-
-<!-- 🔗 Lien vers le manifest PWA -->
-<link rel="manifest" href="/manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
-<meta name="theme-color" content="#ff5722">
-
+<title>HelepMoney - Abonnement Mensuel</title>
 <style>
-body{font-family:'Arial',sans-serif;background:linear-gradient(120deg,#f6d365,#fda085);margin:0;padding:0;}
-.container{max-width:900px;margin:30px auto;padding:20px;background:rgba(255,255,255,0.95);border-radius:15px;box-shadow:0 8px 20px rgba(0,0,0,0.2);}
-h1,h2,h3{color:#ff5722;text-align:center;}
-b{font-weight:bold;}
-.hidden{display:none;}
-input,button,textarea{width:100%;padding:10px;margin:5px 0;border-radius:5px;border:2px solid #ff5722;}
-button{background:#ff5722;color:white;font-weight:bold;cursor:pointer;border:none;}
-table{width:100%;border-collapse:collapse;margin-top:20px;}
-th,td{padding:8px;text-align:center;border:1px solid #ddd;}
-th{background:#ff9800;color:white;}
-tr:hover{background:#ffe0b2;cursor:pointer;}
-ul{list-style:none;padding:0;}
-li{padding:5px;background:#ffd54f;margin:3px 0;border-radius:5px;}
-
-/* Bande annonce défilante */
-#bandeTexte {
-  display:inline-block;
-  padding-left:100%;
-  animation: defilement 15s linear infinite;
-  color:white;
-  font-weight:bold;
-  font-size:16px;
-}
-@keyframes defilement {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
-}
+body{font-family:Arial,sans-serif;margin:0;padding:20px;background:linear-gradient(120deg,#f6d365,#fda085);color:#333}
+.container{max-width:900px;margin:0 auto;background:rgba(255,255,255,0.95);padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+h1{color:#ff5722;text-align:center}
+input,textarea,button{width:100%;padding:10px;margin:6px 0;border-radius:6px;border:2px solid #ff5722;outline:none}
+button{background:#ff5722;color:white;font-weight:bold;cursor:pointer;border:none}
+.hidden{display:none}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999}
+.modal{width:95%;max-width:500px;background:white;padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.3)}
+.countdown{font-weight:bold;color:#d84315}
+.success{color:green;font-weight:bold}
+.error{color:red;font-weight:bold}
+.row{display:flex;gap:10px;align-items:center}
 </style>
 </head>
 <body>
 
-<!-- Section Admin -->
-<div class="container" id="adminSection">
-<h1><b>HelepMoney - Administration</b></h1>
-<label>Code Admin :</label>
-<input type="password" id="adminCode">
-<button id="accessBtn">Accéder</button>
-<p id="accessMsg"></p>
-<table>
-<thead>
-<tr>
-<th>Entreprise</th>
-<th>Propriétaire</th>
-<th>Numéros</th>
-<th>Lien abonné</th>
-<th>État</th>
-</tr>
-</thead>
-<tbody id="adminTable"></tbody>
-</table>
+<div class="container">
+<h1>HelepMoney — Gestion Abonnements</h1>
+
+<p>Montant : <b>1000 XAF</b> — Durée : <b>30 jours</b></p>
+<p>Redirection après validation : <b>https://helepmoney.vercel.app/?abonne=A004</b></p>
+
+<h3>Abonné actif :</h3>
+<p><b>Nom :</b> <span id="abonneNom">Pauline Mbarga</span></p>
+<p><b>Numéros :</b> OM:655001122 | MoMo:676000111</p>
+<p><b>Temps restant :</b> <span id="countdown" class="countdown">--:--:--:--</span></p>
+
+<button id="renewBtn">Renouveler l'abonnement</button>
+<p id="userMsg"></p>
 </div>
 
-<!-- Section Utilisateur -->
-<div class="container hidden" id="userSection">
-  <div id="bandeAnnonce" style="width:100%;overflow:hidden;background:#ff9800;padding:10px 0;white-space:nowrap;box-sizing:border-box;">
-    <span id="bandeTexte">🟠 Promotion 🟣 – Bienvenue sur HelepMoney ! Partagez vos infos de paiement sur toutes les plateformes, monétisez vos sites web, liens et groupes créé ton compte gratuitement contact administration WhatsApp 🔥 Infoline: 651475255 Yde nyom3</span>
-  </div>
+<div class="overlay hidden" id="popup">
+<div class="modal">
+<h2>Renouvellement — 1000 XAF / 30 jours</h2>
+<p>Choisissez une méthode :</p>
 
-<h1><b>HelepMoney</b></h1>
-<input type="text" id="searchAbonne" placeholder="Rechercher un abonné...">
-<ul id="abonneList"></ul>
+<h4>1) Paiement Mobile Money</h4>
+<p>Bénéficiaire : Loveline Wirnkar | MoMo:676353859 | OM:640647072</p>
+<textarea id="momoMsg" rows="4" placeholder="Collez le message complet MoMo ici"></textarea>
+<button id="validateMomo">Valider paiement</button>
+<p id="momoFeedback"></p>
 
-<div id="abonneDetail" class="hidden">
-<h3 id="abonneNom"></h3>
-<p><b>Entreprise :</b> <span id="abonneEntreprise"></span></p>
-<p><b>Propriétaire :</b> <span id="abonneProprietaire"></span></p>
-<p><b>Numéros :</b> <span id="abonneComptes"></span></p>
-<textarea id="messagePaiement" rows="4" placeholder="Collez le message Mobile Money"></textarea>
-<button id="validerPaiement">Valider le paiement</button>
-<p id="msgPaiement"></p>
-<button id="retourAdmin">Retour Administration</button>
+<h4>2) Code d'accès admin</h4>
+<input type="password" id="adminCodeInput" placeholder="Entrez le code 233233">
+<button id="validateCode">Valider code</button>
+<p id="codeFeedback"></p>
+
+<button id="closePopup">Annuler</button>
 </div>
 </div>
 
 <script>
-const ADMIN_CODE = "233233";
+const REDIRECT_URL="https://helepmoney.vercel.app/?abonne=A004";
+const SUBSCRIPTION_MS=1000*60*60*24*30;
+const MIN_AGE_MS=10*60*1000;
+let subscriptionExpiry=Date.now()-1000*60*5; // expiré pour test
+let transactionsUsed=[];
 
-// Liste des abonnés
-const abonnés = [
-  {id:"A001", entreprise:"Boutique Alpha", proprietaire:"Jean Dupont", numeros:{om:"690112233", momo:"677889900"}, ouvert:true, transactions:[]},
-  {id:"A002", entreprise:"Maçonnerie BTP", proprietaire:"Kegni Ismaël", numeros:{om:"656207273", momo:"674556677"}, ouvert:true, transactions:[]},
-  {id:"A003", entreprise:"Lesfacilitateurs groupe administrateur", proprietaire:"kono emini Michel", numeros:{om:"656050097", momo:"651475255"}, ouvert:true, transactions:[]}, 
-  {id:"A004", entreprise:"Fabrice shop", proprietaire:"Fabrice shop", numeros:{om:"691223344", momo:"675453576"}, ouvert:true, transactions:[]},
-  {id:"A005", entreprise:"agce de voyage située à Olembe as verso pic-nick Yde bangou bafss bafg bana nkong location de voiture bus mini bus car vip", proprietaire:"ze Bertin Guy romeo", numeros:{om:"688127961", momo:"651246897"}, ouvert:true, transactions:[22,09,05]},
-  {id:"A006", entreprise:"agence de voyage amour voyage bafss mbouda ndshang", proprietaire:"tantan raoul", numeros:{om:"ras", momo:"673335253"}, ouvert:true, transactions:[24,09,25]}, 
-  {id:"A007", entreprise:"Station Service Petro", proprietaire:"Didier Etame", numeros:{om:"694556677", momo:"674221100"}, ouvert:true, transactions:[]},
-  {id:"A008", entreprise:"Garage AutoFix", proprietaire:"Patrick Nguema", numeros:{om:"695667788", momo:"678334455"}, ouvert:true, transactions:[]},
-  {id:"A009", entreprise:"Coiffure Divine", proprietaire:"Linda Mvondo", numeros:{om:"696778899", momo:"679445566"}, ouvert:true, transactions:[]},
-  {id:"A010", entreprise:"Boutique Informatique", proprietaire:"Albert Ngono", numeros:{om:"697889900", momo:"674998877"}, ouvert:true, transactions:[]},
-  {id:"A011", entreprise:"Restaurant Le Festin", proprietaire:"Nathalie Ebong", numeros:{om:"698990011", momo:"677223344"}, ouvert:true, transactions:[]},
-  {id:"A012", entreprise:"Librairie Savoir", proprietaire:"Fabrice Talla", numeros:{om:"699001122", momo:"678556677"}, ouvert:true, transactions:[]},
-  {id:"A013", entreprise:"FastFood King", proprietaire:"Brice Tchoumi", numeros:{om:"690223344", momo:"676667788"}, ouvert:true, transactions:[]},
-  {id:"A014", entreprise:"Cyber Café Connect", proprietaire:"Samuel Kouassi", numeros:{om:"691334455", momo:"677778899"}, ouvert:true, transactions:[]},
-  {id:"A015", entreprise:"Boutique Mode", proprietaire:"Sylvie Mbarga", numeros:{om:"692445566", momo:"674889900"}, ouvert:true, transactions:[]},
-  {id:"A016", entreprise:"Électro Service", proprietaire:"Thomas Ekane", numeros:{om:"693556677", momo:"679990011"}, ouvert:true, transactions:[]},
-  {id:"A017", entreprise:"Salon Beauté Luxe", proprietaire:"Chantal Ngo", numeros:{om:"694667788", momo:"675112233"}, ouvert:true, transactions:[]},
-  {id:"A018", entreprise:"Boucherie Viande Fraîche", proprietaire:"André Biyaga", numeros:{om:"695778899", momo:"678221133"}, ouvert:true, transactions:[]},
-  {id:"A019", entreprise:"Snack Bar Chill", proprietaire:"Victor Essono", numeros:{om:"696889900", momo:"679334455"}, ouvert:true, transactions:[]},
- {id:"A020", entreprise:"ras", proprietaire:"ndoumou  zobo Benoît franck ", numeros:{om:"00000000", momo:"678605705"}, ouvert:true, transactions:[]},
-  {id:"A021", entreprise:"admin", proprietaire:"Loveline Kinyuy Wirnkar", numeros:{om:"697990011", momo:"676353859"}, ouvert:true, transactions:[]}
-];
+const countdownEl=document.getElementById("countdown");
+const userMsg=document.getElementById("userMsg");
+const popup=document.getElementById("popup");
+const renewBtn=document.getElementById("renewBtn");
+const momoMsgEl=document.getElementById("momoMsg");
+const validateMomoBtn=document.getElementById("validateMomo");
+const momoFeedback=document.getElementById("momoFeedback");
+const adminCodeInput=document.getElementById("adminCodeInput");
+const validateCodeBtn=document.getElementById("validateCode");
+const codeFeedback=document.getElementById("codeFeedback");
+const closePopupBtn=document.getElementById("closePopup");
 
-const transactionsUtilisees = [];
-const adminSection = document.getElementById("adminSection");
-const userSection = document.getElementById("userSection");
-const adminTable = document.getElementById("adminTable");
-const accessBtn = document.getElementById("accessBtn");
-const adminCodeInput = document.getElementById("adminCode");
-const accessMsg = document.getElementById("accessMsg");
-const searchAbonne = document.getElementById("searchAbonne");
-const abonneList = document.getElementById("abonneList");
-const abonneDetail = document.getElementById("abonneDetail");
-const abonneNom = document.getElementById("abonneNom");
-const abonneEntreprise = document.getElementById("abonneEntreprise");
-const abonneProprietaire = document.getElementById("abonneProprietaire");
-const abonneComptes = document.getElementById("abonneComptes");
-const messagePaiement = document.getElementById("messagePaiement");
-const validerPaiement = document.getElementById("validerPaiement");
-const msgPaiement = document.getElementById("msgPaiement");
-const retourAdmin = document.getElementById("retourAdmin");
-
-// Mise à jour table admin
-function updateAdminTable(){
-  adminTable.innerHTML = "";
-  abonnés.forEach(a => {
-    const lien = `?abonne=${a.id}`;
-    const btnEtat = a.ouvert ? 'Ouvert' : 'Fermé';
-    const lienHTML = a.ouvert ? `<a href="${lien}">Voir</a>` : `<span style="color:gray;cursor:not-allowed;">Voir</span>`;
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${a.entreprise}</td><td>${a.proprietaire}</td><td>OM:${a.numeros.om} | MoMo:${a.numeros.momo}</td><td>${lienHTML}</td><td>${btnEtat}</td>`;
-    adminTable.appendChild(tr);
-  });
-}
-
-// Accès admin
-accessBtn.addEventListener("click", ()=>{
-  if(adminCodeInput.value.trim() === ADMIN_CODE){ accessMsg.textContent="✅ Accès autorisé"; updateAdminTable(); } 
-  else { accessMsg.textContent="❌ Code incorrect"; }
-});
-
-// Afficher abonné
-function showAbonne(a){
-  if(!a.ouvert) return;
-  abonneDetail.classList.remove("hidden");
-  abonneNom.textContent = a.proprietaire;
-  abonneEntreprise.textContent = a.entreprise;
-  abonneProprietaire.textContent = a.proprietaire;
-  abonneComptes.textContent = `OM:${a.numeros.om} | MoMo:${a.numeros.momo}`;
-  abonneNom.dataset.id = a.id;
-  messagePaiement.value = "";
-  msgPaiement.textContent = "";
-  adminSection.classList.add("hidden");
-  userSection.classList.remove("hidden");
-}
-
-// Recherche
-searchAbonne.addEventListener("input", ()=>{
-  const val = searchAbonne.value.toLowerCase();
-  abonneList.innerHTML = "";
-  abonnés.filter(a => a.proprietaire.toLowerCase().includes(val) || a.entreprise.toLowerCase().includes(val))
-          .forEach(a => {
-            if(a.ouvert){
-              const li = document.createElement("li");
-              li.textContent = `${a.proprietaire} (${a.entreprise})`;
-              li.addEventListener("click", ()=> showAbonne(a));
-              abonneList.appendChild(li);
-            }
-          });
-});
-
-// Valider paiement
-validerPaiement.addEventListener("click", ()=>{
-  const message = messagePaiement.value.trim();
-  if(!message){ msgPaiement.textContent="Veuillez coller le message MoMo."; return; }
-  const ab = abonnés.find(a => a.id === abonneNom.dataset.id);
-  if(!ab){ msgPaiement.textContent="Abonné introuvable."; return; }
-  if(!message.toLowerCase().includes(ab.proprietaire.toLowerCase()) || (!message.includes(ab.numeros.om) && !message.includes(ab.numeros.momo))){
-    msgPaiement.textContent="Le paiement ne correspond pas à cet abonné."; return;
+function startCountdown(){
+  clearInterval(window.countdownInterval);
+  function update(){
+    const diff=subscriptionExpiry-Date.now();
+    if(diff<=0){
+      countdownEl.textContent="00:00:00:00";
+      clearInterval(window.countdownInterval);
+      userMsg.textContent="⏳ Abonnement expiré !";
+      return;
+    }
+    const d=Math.floor(diff/(1000*60*60*24));
+    const h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+    const m=Math.floor((diff%(1000*60*60))/(1000*60));
+    const s=Math.floor((diff%(1000*60))/1000);
+    countdownEl.textContent=`${d.toString().padStart(2,"0")}:${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
   }
-  const regex = /transaction\s*id\s*[:\-]?\s*(\d+)/i;
-  const match = message.match(regex);
-  if(!match){ msgPaiement.textContent="ID transaction non trouvé."; return; }
-  const idTransaction = match[1];
-  if(transactionsUtilisees.includes(idTransaction)){ msgPaiement.textContent= "Cette transaction a déjà été utilisée : paiement non valide."; return; }
-  transactionsUtilisees.push(idTransaction);
-  ab.transactions.push({id: idTransaction});
-  msgPaiement.textContent = `✅ Paiement validé pour ${ab.proprietaire}`;
-  messagePaiement.value = "";
-});
-
-// Retour admin
-retourAdmin.addEventListener("click", ()=>{
-  userSection.classList.add("hidden");
-  adminSection.classList.remove("hidden");
-  abonneDetail.classList.add("hidden");
-});
-
-// Ouvrir par défaut abonné A001
-window.addEventListener("load", ()=>{
-  const params = new URLSearchParams(window.location.search);
-  let idAbonne = params.get("abonne") || "A001"; // par défaut A001
-  const ab = abonnés.find(a => a.id === idAbonne);
-  if(ab && ab.ouvert) showAbonne(ab);
-});
-
-// Enregistrement Service Worker
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js")
-    .then(()=> console.log("✅ Service Worker enregistré"))
-    .catch(err => console.error("❌ Erreur Service Worker :", err));
+  update();
+  window.countdownInterval=setInterval(update,1000);
 }
+startCountdown();
+
+renewBtn.addEventListener("click",()=>{popup.classList.remove("hidden");});
+
+closePopupBtn.addEventListener("click",()=>{popup.classList.add("hidden");});
+
+validateMomoBtn.addEventListener("click",()=>{
+  const msg=momoMsgEl.value.trim();
+  if(!msg){momoFeedback.textContent="❌ Collez le message"; return;}
+  const txIdMatch=msg.match(/Financial Transaction Id:\s*(\d+)/i);
+  if(!txIdMatch){momoFeedback.textContent="❌ ID transaction non trouvé"; return;}
+  const txId=txIdMatch[1];
+  if(transactionsUsed.includes(txId)){momoFeedback.textContent="❌ Transaction déjà utilisée"; return;}
+  const dateMatch=msg.match(/à (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/);
+  const txDate=dateMatch?new Date(dateMatch[1]):new Date();
+  if(Date.now()-txDate.getTime()<MIN_AGE_MS){momoFeedback.textContent="❌ Transaction trop récente (<10min)"; return;}
+  if(!msg.includes("Pauline Mbarga") && !msg.includes("676000111")){momoFeedback.textContent="❌ Nom ou numéro incorrect"; return;}
+  // succès
+  transactionsUsed.push(txId);
+  subscriptionExpiry=Date.now()+SUBSCRIPTION_MS;
+  startCountdown();
+  momoFeedback.textContent="✅ Paiement validé !";
+  popup.classList.add("hidden");
+  userMsg.textContent="✅ Abonnement renouvelé.";
+  setTimeout(()=>{window.location.href=REDIRECT_URL;},1200);
+});
+
+validateCodeBtn.addEventListener("click",()=>{
+  if(adminCodeInput.value.trim()!=="233233"){codeFeedback.textContent="❌ Code incorrect"; return;}
+  subscriptionExpiry=Date.now()+SUBSCRIPTION_MS;
+  startCountdown();
+  codeFeedback.textContent="✅ Code valide !";
+  popup.classList.add("hidden");
+  userMsg.textContent="✅ Abonnement renouvelé via code.";
+  setTimeout(()=>{window.location.href=REDIRECT_URL;},1200);
+});
 </script>
 </body>
 </html>
