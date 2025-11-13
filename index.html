@@ -3,126 +3,295 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💚 HelepMoney - Accueil</title>
+<title>💚 HelepMoney</title>
 <style>
 body{margin:0;font-family:'Poppins',sans-serif;background:#0b0f19;color:#f1f5f9;display:flex;justify-content:center;padding:20px;}
-.container{background:#141b2e;padding:20px;border-radius:20px;width:95%;max-width:500px;box-shadow:0 0 20px rgba(0,0,0,0.5);}
-h2{color:#10b981;margin-bottom:10px;text-align:center;}
+.container{background:#141b2e;padding:20px;border-radius:20px;width:95%;max-width:800px;box-shadow:0 0 20px rgba(0,0,0,0.5);}
+header{display:flex;align-items:center;gap:10px;margin-bottom:15px;}
+header img{width:40px;height:40px;}
 input,select,button,textarea{padding:10px;margin:5px;border-radius:8px;border:none;outline:none;font-size:14px;width:100%;}
+textarea{resize:none;}
 button{background:linear-gradient(90deg,#2563eb,#10b981);color:#fff;font-weight:bold;cursor:pointer;transition:0.3s;}
 button:hover{opacity:0.9;transform:scale(0.98);}
+.info,.valid{margin-top:15px;padding:10px;border-radius:10px;text-align:left;}
+.info{background:#1f2937;}
+.valid{background:#10b98133;color:#10b981;}
 .hidden{display:none;}
+#profile-pic{width:100px;height:100px;border-radius:50%;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;}
 table{width:100%;border-collapse:collapse;margin-top:10px;}
-th,td{padding:10px;border:1px solid #333;text-align:center;}
-th{background:#2563eb;}
-.blocked{background:#f87171;}
-.unblocked{background:#10b981;}
-.delete{background:#ef4444;}
+th,td{padding:8px;text-align:left;border-bottom:1px solid #333;}
 </style>
 </head>
 <body>
 <div class="container">
+<header><img src="https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/file_00000000def061f99f722813d5358de9.png" alt="HelepMoney"><h2>💚 HelepMoney</h2></header>
 
-<h2>💚 HelepMoney - Accueil</h2>
-
-<h3>Créer un compte</h3>
-<input type="text" id="name" placeholder="Nom complet">
-<input type="text" id="phone" placeholder="Numéro mobile">
-<input type="text" id="company" placeholder="Entreprise">
-<input type="text" id="services" placeholder="Prestations">
-<button onclick="createAccount()">➕ Créer le compte</button>
-<div id="create-status" style="margin-top:10px;color:#10b981;"></div>
-
-<hr>
-<h3>💼 Accès Administrateur</h3>
-<input type="password" id="admin-code" placeholder="Code admin">
-<button onclick="loginAdmin()">🔑 Accès Admin</button>
-<div id="admin-status" style="margin-top:10px;color:#10b981;"></div>
-
-<div id="admin-panel" class="hidden">
-  <table>
-    <thead>
-      <tr>
-        <th>Nom</th>
-        <th>Numéro</th>
-        <th>Entreprise</th>
-        <th>Prestations</th>
-        <th>Bloqué</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="user-table"></tbody>
-  </table>
+<!-- HOME -->
+<div id="home-section">
+<button id="btn-create">➕ Créer un compte</button>
+<button id="btn-admin">🛠️ Admin</button>
+<div class="valid" id="home-msg" style="display:none;"></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+<!-- CREATE ACCOUNT -->
+<div id="create-section" class="hidden">
+<h3>Créer un nouveau compte</h3>
+<input type="text" id="new-name" placeholder="Nom">
+<input type="text" id="new-phone" placeholder="Numéro mobile">
+<input type="text" id="new-company" placeholder="Entreprise">
+<input type="text" id="new-services" placeholder="Prestations">
+<h4>Bénéficiaires</h4>
+<div id="beneficiaries-list"></div>
+<input type="text" id="benef-name" placeholder="Nom bénéficiaire">
+<input type="text" id="benef-phone" placeholder="Numéro bénéficiaire">
+<select id="benef-type">
+<option value="momo">Momo</option>
+<option value="om">Orange Money</option>
+</select>
+<button id="btn-add-benef">➕ Ajouter bénéficiaire</button>
+<hr>
+<button id="btn-create-account">💾 Créer</button>
+<button id="btn-back1">🏠 Retour</button>
+<div class="valid" id="create-msg" style="display:none;"></div>
+</div>
+
+<!-- USER SECTION -->
+<div id="user-section" class="hidden">
+<img id="profile-pic" src="https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/file_00000000def061f99f722813d5358de9.png" alt="Photo de profil">
+<input type="file" id="upload-file">
+<button id="btn-upload">📤 Modifier ma photo</button>
+
+<div class="info">
+Nom : <span id="user-name"></span><br>
+Numéro : <span id="user-phone"></span><br>
+Entreprise : <span id="user-company"></span><br>
+Prestations : <span id="user-services"></span><br>
+ID : <span id="user-id"></span>
+</div>
+
+<h3>Bénéficiaires</h3>
+<div id="user-beneficiaries"></div>
+
+<button id="btn-edit-toggle">✏️ Modifier mon compte</button>
+<div id="edit-form" class="hidden">
+<input type="text" id="edit-name" placeholder="Nom">
+<input type="text" id="edit-phone" placeholder="Numéro mobile">
+<input type="text" id="edit-company" placeholder="Entreprise">
+<input type="text" id="edit-services" placeholder="Prestations">
+<h4>Ajouter bénéficiaire</h4>
+<input type="text" id="edit-benef-name" placeholder="Nom bénéficiaire">
+<input type="text" id="edit-benef-phone" placeholder="Numéro bénéficiaire">
+<select id="edit-benef-type">
+<option value="momo">Momo</option>
+<option value="om">Orange Money</option>
+</select>
+<button id="btn-add-edit-benef">➕ Ajouter bénéficiaire</button>
+</div>
+
+<hr>
+<h3>💸 Vérification Paiement Mobile Money</h3>
+<label>
+<input type="radio" name="verifyMode" value="auto" checked> 🔄 Mode automatique
+</label>
+<label>
+<input type="radio" name="verifyMode" value="manual"> ✏️ Mode manuel
+</label>
+
+<div id="manual-input">
+<select id="beneficiary"></select>
+<textarea id="message" rows="4" placeholder="Collez ici le message Mobile Money reçu"></textarea>
+</div>
+<button id="btn-verify">✅ Vérifier le paiement</button>
+<div class="valid" id="payment-status" style="display:none;"></div>
+
+<button id="btn-share">🔗 Copier le lien de ma page</button>
+<div class="valid" id="share-status" style="display:none;"></div>
+<hr>
+<button id="btn-back-home">🏠 Retour à l'accueil</button>
+</div>
+
+<!-- ADMIN SECTION -->
+<div id="admin-section" class="hidden">
+<button id="btn-back-home2">🏠 Retour à l'accueil</button>
+<h3>📋 Tableau Administrateur</h3>
+<table>
+<thead><tr><th>Nom</th><th>Numéro</th><th>Entreprise</th><th>Prestations</th><th>Bloqué</th><th>Actions</th></tr></thead>
+<tbody id="users-table"></tbody>
+</table>
+</div>
+
 <script>
-const SUPABASE_URL = 'https://ycotvgvevyfyqflicmtw.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inljb3R2Z3ZldnlmeXFmbGljbXR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMTQxMzIsImV4cCI6MjA3NTY5MDEzMn0.Yyod-LWZVv5t5PggZ1EZm83vgkvHgaJd2QFJe4_vMDQ';
-const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// LOCAL STORAGE LOGIC
+let users = JSON.parse(localStorage.getItem("helepmoney_users")) || [];
+let userData = null;
+let benefList = [];
 
-// ---------------- Création de compte ----------------
-async function createAccount(){
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const company = document.getElementById("company").value.trim();
-  const services = document.getElementById("services").value.trim();
-  if(!name || !phone){ alert("Nom et numéro requis"); return; }
-
-  const id = "U"+Date.now(); // ID unique
-  const { data, error } = await supabase.from('users').insert([{id,name,phone,company_name:company,services,blocked:false}]).select().single();
-  if(error){ alert("Erreur : "+error.message); return; }
-
-  localStorage.setItem("helepmoney_user", JSON.stringify(data));
-  document.getElementById("create-status").textContent = `✅ Compte créé ! Lien de votre page : ${window.location.origin}/user.html?user=${data.id}`;
-  document.getElementById("name").value="";
-  document.getElementById("phone").value="";
-  document.getElementById("company").value="";
-  document.getElementById("services").value="";
+// CHECK URL PARAM FOR AUTO OPEN USER PAGE
+const params = new URLSearchParams(window.location.search);
+const abonneID = params.get("abonne");
+if(abonneID){
+  userData = users.find(u=>u.id==abonneID);
+  if(userData) showSection("user");
 }
 
-// ---------------- Admin ----------------
-function loginAdmin(){
-  const code = document.getElementById("admin-code").value;
-  if(code !== "233233"){ alert("Code incorrect ❌"); return; }
-  document.getElementById("admin-status").textContent = "✅ Accès autorisé";
-  document.getElementById("admin-panel").classList.remove("hidden");
-  loadUsersAdmin();
+// NAVIGATION
+function showSection(sec){
+["home","create","user","admin"].forEach(s=>document.getElementById(s+"-section").classList.add("hidden"));
+document.getElementById(sec+"-section").classList.remove("hidden");
+displayUserInfo();
+loadUsersTable();
+}
+document.getElementById("btn-create").onclick = ()=> {showSection("create"); benefList=[]; updateBenefList();};
+document.getElementById("btn-back1").onclick = ()=> showSection("home");
+document.getElementById("btn-back-home").onclick = ()=> showSection("home");
+document.getElementById("btn-back-home2").onclick = ()=> showSection("home");
+document.getElementById("btn-admin").onclick = ()=> {
+  const code = prompt("Code Admin:");
+  if(code==="233233") showSection("admin");
+  else alert("❌ Code incorrect");
+};
+
+// CREATE ACCOUNT
+document.getElementById("btn-add-benef").onclick = ()=>{
+const n=document.getElementById("benef-name").value.trim();
+const p=document.getElementById("benef-phone").value.trim();
+const t=document.getElementById("benef-type").value;
+if(!n||!p){alert("Nom et numéro obligatoires"); return;}
+benefList.push({name:n,phone:p,type:t});
+updateBenefList();
+document.getElementById("benef-name").value="";
+document.getElementById("benef-phone").value="";
+};
+function updateBenefList(){
+const div=document.getElementById("beneficiaries-list");
+div.innerHTML="";
+benefList.forEach(b=>{const el=document.createElement("div"); el.textContent=`${b.name} - ${b.phone} (${b.type})`; div.appendChild(el);});
 }
 
-async function loadUsersAdmin(){
-  const { data, error } = await supabase.from('users').select().order('created_at',{ascending:true});
-  const tbody = document.getElementById("user-table");
-  tbody.innerHTML = "";
-  data.forEach(u=>{
-    tbody.innerHTML += `
-      <tr>
-        <td>${u.name}</td>
-        <td>${u.phone}</td>
-        <td>${u.company_name || "-"}</td>
-        <td>${u.services || "-"}</td>
-        <td>${u.blocked ? "✅" : "❌"}</td>
-        <td>
-          <button class="${u.blocked?'unblocked':'blocked'}" onclick="toggleBlockAdmin('${u.id}',${u.blocked})">${u.blocked?'Débloquer':'Bloquer'}</button>
-          <button class="delete" onclick="deleteUserAdmin('${u.id}')">Supprimer</button>
-        </td>
-      </tr>
-    `;
+document.getElementById("btn-create-account").onclick = ()=>{
+const name=document.getElementById("new-name").value.trim();
+const phone=document.getElementById("new-phone").value.trim();
+const company=document.getElementById("new-company").value.trim();
+const services=document.getElementById("new-services").value.trim();
+if(!name||!phone){alert("Nom et numéro obligatoires"); return;}
+userData={id:Date.now(), name, phone, company, services, beneficiaries:benefList, blocked:false};
+users.push(userData);
+localStorage.setItem("helepmoney_users", JSON.stringify(users));
+alert("✅ Compte créé !");
+showSection("user");
+displayUserInfo();
+updateBeneficiarySelect();
+};
+
+// DISPLAY USER INFO
+function displayUserInfo(){
+if(!userData) return;
+document.getElementById("user-name").textContent=userData.name;
+document.getElementById("user-phone").textContent=userData.phone;
+document.getElementById("user-company").textContent=userData.company||"-";
+document.getElementById("user-services").textContent=userData.services||"-";
+document.getElementById("user-id").textContent=userData.id;
+const div=document.getElementById("user-beneficiaries"); div.innerHTML="";
+userData.beneficiaries.forEach(b=>{const el=document.createElement("div"); el.textContent=`${b.name} - ${b.phone} (${b.type})`; div.appendChild(el);});
+updateBeneficiarySelect();
+}
+
+// EDIT USER
+document.getElementById("btn-edit-toggle").onclick = ()=>{
+document.getElementById("edit-form").classList.toggle("hidden");
+document.getElementById("edit-name").value=userData.name;
+document.getElementById("edit-phone").value=userData.phone;
+document.getElementById("edit-company").value=userData.company;
+document.getElementById("edit-services").value=userData.services;
+};
+document.getElementById("btn-add-edit-benef").onclick = ()=>{
+const n=document.getElementById("edit-benef-name").value.trim();
+const p=document.getElementById("edit-benef-phone").value.trim();
+const t=document.getElementById("edit-benef-type").value;
+if(!n||!p){alert("Nom et numéro obligatoires !"); return;}
+userData.beneficiaries.push({name:n,phone:p,type:t}); displayUserInfo();
+document.getElementById("edit-benef-name").value=""; document.getElementById("edit-benef-phone").value="";
+};
+
+// SHARE LINK
+document.getElementById("btn-share").onclick = ()=>{
+const link = `${window.location.origin}?abonne=${userData.id}`;
+navigator.clipboard.writeText(link).then(()=>{document.getElementById("share-status").textContent="Lien copié 🔗: "+link; document.getElementById("share-status").style.display="block";});
+};
+
+// VERIFY PAYMENT MANUEL + AUTOMATIQUE
+function updateBeneficiarySelect(){
+const sel=document.getElementById("beneficiary"); sel.innerHTML="";
+userData.beneficiaries.forEach(b=>{const opt=document.createElement("option"); opt.value=b.phone; opt.textContent=`${b.name} - ${b.phone} (${b.type})`; sel.appendChild(opt);});
+}
+
+// Fonction pseudo lecture SMS Android
+async function readLastSMS(){
+  if(!("sms" in navigator)) throw new Error("Mode automatique non supporté");
+  return new Promise((resolve,reject)=>{
+    try{
+      const request = navigator.sms.receiveSMS();
+      request.onsuccess = (event)=>{
+        const messages = event.result; 
+        if(messages.length===0) reject("Aucun SMS trouvé");
+        else resolve(messages[messages.length-1].body.toLowerCase());
+      };
+      request.onerror = (err)=> reject("Erreur lecture SMS: "+err.message);
+    } catch(e){ reject("Erreur lecture SMS: "+e.message);}
   });
 }
 
-async function toggleBlockAdmin(id, currentlyBlocked){
-  const { error } = await supabase.from('users').update({blocked: !currentlyBlocked}).eq('id', id);
-  if(error){ alert("Erreur : "+error.message); return; }
-  loadUsersAdmin();
-}
+const radios = document.getElementsByName("verifyMode");
+radios.forEach(radio=>{
+  radio.addEventListener("change", ()=>{
+    document.getElementById("manual-input").style.display = radio.value==="manual" ? "block" : "none";
+  });
+});
 
-async function deleteUserAdmin(id){
-  if(!confirm("Voulez-vous vraiment supprimer ce compte ?")) return;
-  const { error } = await supabase.from('users').delete().eq('id', id);
-  if(error){ alert("Erreur : "+error.message); return; }
-  loadUsersAdmin();
+document.getElementById("btn-verify").onclick = async ()=>{
+  const mode = [...radios].find(r=>r.checked).value;
+  const status = document.getElementById("payment-status");
+  status.style.display="block";
+  const montant = "100";
+
+  if(mode==="manual"){
+    const msg = document.getElementById("message").value.toLowerCase();
+    const benefPhone = document.getElementById("beneficiary").value;
+    status.textContent=(msg.includes("transfert") && msg.includes("succès") && msg.includes(montant) && msg.includes(benefPhone))?"✅ Paiement validé ! 🎉":"❌ Message invalide ou non reconnu.";
+  } else {
+    try{
+      const lastSMS = await readLastSMS();
+      const benefPhone = userData.beneficiaries.find(b=>lastSMS.includes(b.phone))?.phone;
+      const valid = lastSMS.includes("transfert") && lastSMS.includes("succès") && lastSMS.includes(montant) && benefPhone;
+      status.textContent = valid?"✅ Paiement détecté automatiquement ! 🎉":"❌ Aucun paiement détecté.";
+    } catch(e){
+      status.textContent="❌ Mode automatique indisponible sur ce téléphone. Utilisez le mode manuel.";
+    }
+  }
+};
+
+// ADMIN TABLEAU
+function loadUsersTable(){
+const table=document.getElementById("users-table");
+table.innerHTML="";
+users.forEach(u=>{
+const tr=document.createElement("tr");
+tr.innerHTML=`<td>${u.name}</td><td>${u.phone}</td><td>${u.company||'-'}</td><td>${u.services||'-'}</td><td>${u.blocked?'✅':'❌'}</td>
+<td><button onclick="toggleBlock(${u.id})">${u.blocked?'Débloquer':'Bloquer'}</button><button onclick="deleteUser(${u.id})">Supprimer</button></td>`;
+table.appendChild(tr);
+});
 }
+window.toggleBlock = (id)=>{
+users.forEach(u=>{if(u.id===id) u.blocked=!u.blocked;});
+localStorage.setItem("helepmoney_users", JSON.stringify(users));
+loadUsersTable();
+};
+window.deleteUser = (id)=>{
+if(!confirm("Confirmer suppression ?")) return;
+users=users.filter(u=>u.id!==id);
+localStorage.setItem("helepmoney_users", JSON.stringify(users));
+loadUsersTable();
+};
 </script>
 </div>
 </body>
