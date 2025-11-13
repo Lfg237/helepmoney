@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💰HelepMoney💡 récolte des fonds en ligne facilement💳</title>
+<title>💚 HelepMoney</title>
 <style>
 body{margin:0;font-family:'Poppins',sans-serif;background:#0b0f19;color:#f1f5f9;display:flex;justify-content:center;padding:20px;}
 .container{background:#141b2e;padding:20px;border-radius:20px;width:95%;max-width:800px;box-shadow:0 0 20px rgba(0,0,0,0.5);}
@@ -20,16 +20,25 @@ button:hover{opacity:0.9;transform:scale(0.98);}
 #profile-pic{width:100px;height:100px;border-radius:50%;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;}
 table{width:100%;border-collapse:collapse;margin-top:10px;}
 th,td{padding:8px;text-align:left;border-bottom:1px solid #333;}
+#accounts-list{margin-top:10px;max-height:200px;overflow-y:auto;background:#1f2937;padding:10px;border-radius:10px;}
+#accounts-list div{padding:5px;cursor:pointer;border-bottom:1px solid #333;}
+#accounts-list div:hover{background:#2563eb33;}
+#ads-display div{padding:5px;margin:5px 0;background:#2563eb33;border-radius:5px;}
 </style>
 </head>
 <body>
 <div class="container">
-<header><img 💰 src="https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/file_00000000def061f99f722813d5358de9.png" alt="HelepMoney"><h2>💚 HelepMoney</h2></header>
+<header>
+<img src="https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/file_00000000def061f99f722813d5358de9.png" alt="HelepMoney">
+<h2>💚 HelepMoney</h2>
+</header>
 
 <!-- HOME -->
 <div id="home-section">
 <button id="btn-create">➕ Créer un compte</button>
 <button id="btn-admin">🛠️ Admin</button>
+<button id="btn-toggle-list">📋 Liste des comptes</button>
+<div id="accounts-list" class="hidden"></div>
 <div class="valid" id="home-msg" style="display:none;"></div>
 </div>
 
@@ -106,6 +115,11 @@ ID : <span id="user-id"></span>
 
 <button id="btn-share">🔗 Copier le lien de ma page</button>
 <div class="valid" id="share-status" style="display:none;"></div>
+
+<hr>
+<h3>🎬 Bande-annonce</h3>
+<div id="ads-display"></div>
+
 <hr>
 <button id="btn-back-home">🏠 Retour à l'accueil</button>
 </div>
@@ -118,6 +132,14 @@ ID : <span id="user-id"></span>
 <thead><tr><th>Nom</th><th>Numéro</th><th>Entreprise</th><th>Prestations</th><th>Bloqué</th><th>Actions</th></tr></thead>
 <tbody id="users-table"></tbody>
 </table>
+
+<h3>🎬 Bande-annonce publicitaire</h3>
+<input type="text" id="ad-text" placeholder="Écrire une annonce">
+<button id="btn-add-ad">➕ Ajouter annonce</button>
+<table>
+<thead><tr><th>Annonce</th><th>Actions</th></tr></thead>
+<tbody id="ads-table"></tbody>
+</table>
 </div>
 
 <script>
@@ -125,6 +147,9 @@ ID : <span id="user-id"></span>
 let users = JSON.parse(localStorage.getItem("helepmoney_users")) || [];
 let userData = null;
 let benefList = [];
+
+// ADS
+let ads = JSON.parse(localStorage.getItem("helepmoney_ads")) || [];
 
 // CHECK URL PARAM FOR AUTO OPEN USER PAGE
 const params = new URLSearchParams(window.location.search);
@@ -140,6 +165,8 @@ function showSection(sec){
 document.getElementById(sec+"-section").classList.remove("hidden");
 displayUserInfo();
 loadUsersTable();
+loadAdsTable();
+displayAds();
 }
 document.getElementById("btn-create").onclick = ()=> {showSection("create"); benefList=[]; updateBenefList();};
 document.getElementById("btn-back1").onclick = ()=> showSection("home");
@@ -222,53 +249,10 @@ navigator.clipboard.writeText(link).then(()=>{document.getElementById("share-sta
 // VERIFY PAYMENT MANUEL + AUTOMATIQUE
 function updateBeneficiarySelect(){
 const sel=document.getElementById("beneficiary"); sel.innerHTML="";
+if(userData && userData.beneficiaries){
 userData.beneficiaries.forEach(b=>{const opt=document.createElement("option"); opt.value=b.phone; opt.textContent=`${b.name} - ${b.phone} (${b.type})`; sel.appendChild(opt);});
 }
-
-// Fonction pseudo lecture SMS Android
-async function readLastSMS(){
-  if(!("sms" in navigator)) throw new Error("Mode automatique non supporté");
-  return new Promise((resolve,reject)=>{
-    try{
-      const request = navigator.sms.receiveSMS();
-      request.onsuccess = (event)=>{
-        const messages = event.result; 
-        if(messages.length===0) reject("Aucun SMS trouvé");
-        else resolve(messages[messages.length-1].body.toLowerCase());
-      };
-      request.onerror = (err)=> reject("Erreur lecture SMS: "+err.message);
-    } catch(e){ reject("Erreur lecture SMS: "+e.message);}
-  });
 }
-
-const radios = document.getElementsByName("verifyMode");
-radios.forEach(radio=>{
-  radio.addEventListener("change", ()=>{
-    document.getElementById("manual-input").style.display = radio.value==="manual" ? "block" : "none";
-  });
-});
-
-document.getElementById("btn-verify").onclick = async ()=>{
-  const mode = [...radios].find(r=>r.checked).value;
-  const status = document.getElementById("payment-status");
-  status.style.display="block";
-  const montant = "100";
-
-  if(mode==="manual"){
-    const msg = document.getElementById("message").value.toLowerCase();
-    const benefPhone = document.getElementById("beneficiary").value;
-    status.textContent=(msg.includes("transfert") && msg.includes("succès") && msg.includes(montant) && msg.includes(benefPhone))?"✅ Paiement validé ! 🎉":"❌ Message invalide ou non reconnu.";
-  } else {
-    try{
-      const lastSMS = await readLastSMS();
-      const benefPhone = userData.beneficiaries.find(b=>lastSMS.includes(b.phone))?.phone;
-      const valid = lastSMS.includes("transfert") && lastSMS.includes("succès") && lastSMS.includes(montant) && benefPhone;
-      status.textContent = valid?"✅ Paiement détecté automatiquement ! 🎉":"❌ Aucun paiement détecté.";
-    } catch(e){
-      status.textContent="❌ Mode automatique indisponible sur ce téléphone. Utilisez le mode manuel.";
-    }
-  }
-};
 
 // ADMIN TABLEAU
 function loadUsersTable(){
@@ -292,6 +276,87 @@ users=users.filter(u=>u.id!==id);
 localStorage.setItem("helepmoney_users", JSON.stringify(users));
 loadUsersTable();
 };
+
+// TOGGLE LISTE DES COMPTES
+const btnToggle = document.getElementById("btn-toggle-list");
+const accountsDiv = document.getElementById("accounts-list");
+function updateAccountsList(){
+  accountsDiv.innerHTML = "";
+  users.forEach(u=>{
+    const div = document.createElement("div");
+    div.textContent = u.name + " - " + u.phone;
+    div.onclick = ()=> {
+      userData = u;
+      localStorage.setItem("helepmoney_user", JSON.stringify(userData));
+      showSection("user");
+    };
+    accountsDiv.appendChild(div);
+  });
+}
+btnToggle.onclick = ()=>{
+  if(accountsDiv.classList.contains("hidden")){
+    updateAccountsList();
+    accountsDiv.classList.remove("hidden");
+  } else {
+    accountsDiv.classList.add("hidden");
+  }
+};
+
+// -----------------------
+// ADS LOGIC
+// -----------------------
+function loadAdsTable() {
+  const table = document.getElementById("ads-table");
+  table.innerHTML = "";
+  ads.forEach((ad, index) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${ad}</td>
+    <td>
+      <button onclick="editAd(${index})">✏️ Modifier</button>
+      <button onclick="deleteAd(${index})">❌ Supprimer</button>
+    </td>`;
+    table.appendChild(tr);
+  });
+}
+document.getElementById("btn-add-ad").onclick = ()=>{
+  const text = document.getElementById("ad-text").value.trim();
+  if(!text){alert("Écrire une annonce"); return;}
+  ads.push(text);
+  localStorage.setItem("helepmoney_ads", JSON.stringify(ads));
+  document.getElementById("ad-text").value="";
+  loadAdsTable();
+  displayAds();
+};
+window.editAd = (index)=>{
+  const newText = prompt("Modifier l'annonce:", ads[index]);
+  if(newText){
+    ads[index] = newText;
+    localStorage.setItem("helepmoney_ads", JSON.stringify(ads));
+    loadAdsTable();
+    displayAds();
+  }
+};
+window.deleteAd = (index)=>{
+  if(!confirm("Confirmer suppression ?")) return;
+  ads.splice(index,1);
+  localStorage.setItem("helepmoney_ads", JSON.stringify(ads));
+  loadAdsTable();
+  displayAds();
+};
+function displayAds(){
+  const div = document.getElementById("ads-display");
+  div.innerHTML = "";
+  ads.forEach(ad=>{
+    const el = document.createElement("div");
+    el.textContent = ad;
+    div.appendChild(el);
+  });
+}
+
+// -----------------------
+// LOAD INIT
+displayAds();
+loadAdsTable();
 </script>
 </div>
 </body>
