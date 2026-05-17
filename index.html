@@ -11,6 +11,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
 <style>
 
+/* ===== BASE ===== */
 *{
 margin:0;
 padding:0;
@@ -132,6 +133,8 @@ text-align:center;
 padding:10px;
 border-radius:12px;
 }
+
+/* ===== BANDE ANNONCE (OK) ===== */
 .ads{
 position:fixed;
 bottom:0;
@@ -140,8 +143,6 @@ width:100%;
 background:linear-gradient(90deg,#000,#111,#000);
 border-top:3px solid #ff6600;
 z-index:9999;
-
-/* 🔥 CORRECTION IMPORTANTE */
 height:55px;
 display:flex;
 align-items:center;
@@ -156,8 +157,6 @@ font-weight:900;
 font-size:18px;
 color:#fff;
 letter-spacing:1px;
-
-/* 🔥 meilleure fluidité */
 padding-left:100%;
 animation:scroll 25s linear infinite;
 line-height:55px;
@@ -167,6 +166,7 @@ line-height:55px;
 0%{transform:translateX(0);}
 100%{transform:translateX(-100%);}
 }
+
 </style>
 </head>
 
@@ -219,7 +219,7 @@ line-height:55px;
 </button>
 </div>
 
-<!-- SHARE UNIQUE -->
+<!-- SHARE -->
 <button class="copyBtn" onclick="shareNow()">
 🔗 Partager cette carte de visite
 </button>
@@ -233,8 +233,9 @@ line-height:55px;
 <div class="status" id="statusBox"></div>
 
 </div>
-<div class="ads">
 
+<!-- BANDE ANNONCE -->
+<div class="ads">
 <span>
 ✨ ETS LESFACILITATEURS GROUPE • Carte digitale premium 2026 • WhatsApp : +237670035609 • Design moderne • Partage intelligent ✨
 </span>
@@ -247,7 +248,7 @@ const entreprise="ETS LESFACILITATEURS GROUPE";
 const fonction="Solutions Digitales Premium";
 const proprietaire="Michel Kono";
 
-const orangeMoney="+237670035609 ,kon";
+const orangeMoney="+237670035609";
 const mtnMoney="+237651475255";
 
 const photo="https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/InShot_20260515_231032533.jpg";
@@ -266,15 +267,22 @@ avatar.src=photo;
 orangeImg.src=orangeImage;
 mtnImg.src=mtnImage;
 
-/* ===== SHARE ===== */
-const shareURL=window.location.href;
+/* ===== SHARE FIXED ===== */
+function createID(){
+return Math.random().toString(36).substring(2,10).toUpperCase();
+}
+
+const userID=createID();
+
+/* 🔥 lien corrigé */
+const shareURL="https://helepmoney.vercel.app/?id="+userID;
 
 function shareNow(){
 navigator.clipboard.writeText(shareURL);
 alert("Lien copié !");
 }
 
-/* ===== SEARCH INTERNE ===== */
+/* ===== SEARCH ===== */
 function searchNow(){
 const q=document.getElementById("searchInput").value.toLowerCase();
 
@@ -302,14 +310,13 @@ el.style.background="rgba(255,255,255,0.06)";
 if(!found) alert("Aucun résultat");
 }
 
-/* ===== TIMER 1 AN + 1 H ===== */
-const duration = (365*24*60*60*1000) + (60*60*1000);
-const end = Date.now() + duration;
+/* ===== TIMER ===== */
+const duration=(365*24*60*60*1000)+(60*60*1000);
+const end=Date.now()+duration;
 
 const countdown=document.getElementById("countdown");
 
 setInterval(()=>{
-
 const diff=end-Date.now();
 
 if(diff<=0){
@@ -326,8 +333,8 @@ countdown.innerHTML=`${d}j ${h}h ${m}m ${s}s`;
 
 },1000);
 
-/* STATUS */
-statusBox.innerText="🟢 CARTE ACTIVE";
+/* STATUS FIX */
+document.getElementById("statusBox").innerText="🟢 CARTE ACTIVE";
 
 </script>
 
