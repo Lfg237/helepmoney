@@ -16,7 +16,7 @@ color:white;
 padding:20px;
 }
 
-/* ===== TITRE ===== */
+/* ===== TITLE ===== */
 h2{
 text-align:center;
 margin-bottom:20px;
@@ -48,6 +48,7 @@ border:none;
 border-radius:10px;
 background:linear-gradient(45deg,#ff6600,#ff00cc);
 color:white;
+cursor:pointer;
 }
 
 /* ===== GRID ===== */
@@ -79,7 +80,6 @@ filter:blur(60px);
 opacity:0.4;
 }
 
-/* TEXT */
 .company{text-align:center;font-size:22px;font-weight:bold;text-transform:uppercase;}
 .job{text-align:center;font-size:14px;color:#ddd;margin-bottom:15px;}
 
@@ -101,7 +101,7 @@ gap:10px;
 .value{font-weight:bold;font-size:14px;}
 .label{font-size:12px;color:#bbb;}
 
-/* BUTTONS */
+/* BUTTON */
 .btn{
 display:block;
 margin-top:8px;
@@ -112,6 +112,7 @@ color:white;
 text-decoration:none;
 text-align:center;
 font-weight:bold;
+cursor:pointer;
 }
 
 /* TIMER */
@@ -131,8 +132,7 @@ color:#00ffee;
 
 <h2>📇 MULTI CARTES PREMIUM 2026</h2>
 
-<!-- SEARCH -->
-<div class="searchBox">
+<div class="searchBox" id="searchBox">
 <input id="search" placeholder="🔎 rechercher une carte...">
 <button onclick="searchCards()"><i class="fa fa-search"></i></button>
 </div>
@@ -141,6 +141,7 @@ color:#00ffee;
 
 <script>
 
+/* ================= DATA ================= */
 const baseData = [
 {
 id:"card1",
@@ -187,35 +188,36 @@ mtnImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
 ];
 
 const list = document.getElementById("list");
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
 
-const BASE_URL = window.location.origin + window.location.pathname;
+const duration = 8760 * 60 * 60 * 1000;
 
-/* ===== DURATION FIX ===== */
-const isLeapYear = (new Date().getFullYear() % 4 === 0);
-const durationHours = isLeapYear ? 8784 : 8760;
-const duration = durationHours * 60 * 60 * 1000;
+/* ================= COPY ================= */
+function copyLink(url){
+navigator.clipboard.writeText(url)
+.then(()=>alert("🔗 Lien copié"))
+.catch(()=>alert("Erreur copie"));
+}
 
-/* ===== RENDER ===== */
-function render(data){
+/* ================= RENDER CARD ================= */
+function renderCard(c){
 
-list.innerHTML = "";
+const url = window.location.origin + window.location.pathname + "?id=" + c.id;
 
-data.forEach(c=>{
-
-const url = BASE_URL + "?id=" + c.id;
-
-let start = localStorage.getItem("start_"+c.id);
+const startKey = "start_" + c.id;
+let start = localStorage.getItem(startKey);
 if(!start){
 start = Date.now();
-localStorage.setItem("start_"+c.id,start);
+localStorage.setItem(startKey,start);
 }
 
 const end = parseInt(start) + duration;
 
-const card = document.createElement("div");
-card.className = "card";
+const div = document.createElement("div");
+div.className = "card";
 
-card.innerHTML = `
+div.innerHTML = `
 <div class="company">${c.entreprise}</div>
 <div class="job">${c.fonction}</div>
 
@@ -237,16 +239,16 @@ card.innerHTML = `
 <a class="btn" href="tel:${c.phone}">📞 Appeler</a>
 <a class="btn" href="https://wa.me/${c.whatsapp}" target="_blank">💬 WhatsApp</a>
 
+<button class="btn" onclick="copyLink('${url}')">🔗 Copier lien</button>
 <a class="btn" href="${url}">📂 Ouvrir carte</a>
 
 <div class="timer" id="t_${c.id}">...</div>
 `;
 
-list.appendChild(card);
-});
+return div;
 }
 
-/* ===== TIMER UNIQUE (IMPORTANT FIX) ===== */
+/* ================= TIMER ================= */
 setInterval(()=>{
 
 baseData.forEach(c=>{
@@ -261,7 +263,6 @@ localStorage.setItem("start_"+c.id,start);
 }
 
 const end = parseInt(start) + duration;
-
 const diff = end - Date.now();
 
 if(diff <= 0){
@@ -269,89 +270,48 @@ el.innerHTML = "🔒 EXPIRÉE";
 return;
 }
 
-const days = Math.floor(diff / (1000*60*60*24));
-const hours = Math.floor((diff/(1000*60*60))%24);
-const minutes = Math.floor((diff/(1000*60))%60);
-const seconds = Math.floor((diff/1000)%60);
+const d = Math.floor(diff/(1000*60*60*24));
+const h = Math.floor((diff/(1000*60*60))%24);
+const m = Math.floor((diff/(1000*60))%60);
+const s = Math.floor((diff/1000)%60);
 
-el.innerHTML = `⏳ ${days}j ${hours}h ${minutes}m ${seconds}s`;
+el.innerHTML = `⏳ ${d}j ${h}h ${m}m ${s}s`;
 
 });
 
 },1000);
 
-/* ===== SEARCH ===== */
+/* ================= SEARCH ================= */
 function searchCards(){
 const q = document.getElementById("search").value.toLowerCase();
+list.innerHTML = "";
 
-const filtered = baseData.filter(c =>
+baseData
+.filter(c =>
 c.entreprise.toLowerCase().includes(q) ||
-c.owner.toLowerCase().includes(q) ||
-c.phone.includes(q)
-);
-
-render(filtered);
+c.owner.toLowerCase().includes(q)
+)
+.forEach(c => list.appendChild(renderCard(c)));
 }
 
-/* ===== INIT ===== */
-render(baseData);
-
-/* ===== PAGE UNIQUE ===== */
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-
+/* ================= MODE ================= */
 if(id){
-const c = baseData.find(x=>x.id===id);
 
-if(c){
-document.body.innerHTML = `
-<div style="max-width:420px;margin:auto;color:white;text-align:center;font-family:Arial">
+const card = baseData.find(c=>c.id===id);
 
-<h2>${c.entreprise}</h2>
-<p>${c.fonction}</p>
-
-<img src="${c.photo}" style="width:130px;border-radius:50%;margin:20px 0;">
-
-<p>👤 ${c.owner}</p>
-<p>📞 ${c.phone}</p>
-
-<a href="tel:${c.phone}">Appeler</a><br>
-<a href="https://wa.me/${c.whatsapp}">WhatsApp</a><br>
-
-<button onclick="navigator.clipboard.writeText(window.location.href)">
-🔗 Copier lien
-</button>
-
-</div>
-`;
+if(card){
+document.getElementById("searchBox").style.display="none";
+list.appendChild(renderCard(card));
 }
-}
-// ================= COPY LINK FIX =================
-function copyLink(url){
 
-// essai moderne
-if (navigator.clipboard && window.isSecureContext) {
-navigator.clipboard.writeText(url).then(() => {
-alert("🔗 Lien copié !");
-}).catch(() => fallbackCopy(url));
-} else {
-fallbackCopy(url);
-}
+}else{
+
+baseData.forEach(c=>{
+list.appendChild(renderCard(c));
+});
 
 }
 
-// fallback universel (Android + anciens navigateurs)
-function fallbackCopy(text){
-
-const input = document.createElement("input");
-input.value = text;
-document.body.appendChild(input);
-input.select();
-document.execCommand("copy");
-document.body.removeChild(input);
-
-alert("🔗 Lien copié !");
-}
 </script>
 
 </body>
