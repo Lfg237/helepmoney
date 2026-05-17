@@ -117,29 +117,20 @@ background:rgba(255,255,255,0.08);
 border-radius:14px;
 color:#00ffee;
 }
-/* ===== BANDE ANNONCE ===== */
-.banner{
-width:100%;
-margin-bottom:15px;
-background:rgba(0,0,0,0.6);
-border:1px solid rgba(255,255,255,0.1);
-border-radius:12px;
-overflow:hidden;
-padding:10px 0;
-}
 
-.banner span{
-display:inline-block;
-white-space:nowrap;
-padding-left:100%;
+/* ===== BOUTON ACCUEIL FIXE ===== */
+#homeBtn{
+position:fixed;
+bottom:20px;
+left:20px;
+z-index:9999;
+padding:12px 16px;
+border-radius:14px;
+background:#1e90ff;
+color:white;
 font-weight:bold;
-color:#00ffee;
-animation:scrollBanner 18s linear infinite;
-}
-
-@keyframes scrollBanner{
-0%{transform:translateX(0);}
-100%{transform:translateX(-100%);}
+text-decoration:none;
+display:none;
 }
 </style>
 </head>
@@ -147,12 +138,6 @@ animation:scrollBanner 18s linear infinite;
 <body>
 
 <h2>📇 MULTI CARTES PREMIUM 2026</h2>
-<!-- 🔥 BANDE ANNONCE -->
-<div class="banner">
-  <span>
-    ✨ ETS LESFACILITATEURS GROUPE • Carte Premium 2026 • Création de cartes digitales • Paiement Mobile Money • Support WhatsApp +237670035609 • Design Pro Multi-cartes ✨
-  </span>
-</div>
 
 <div class="searchBox">
 <input id="search" placeholder="🔎 rechercher une carte...">
@@ -161,12 +146,15 @@ animation:scrollBanner 18s linear infinite;
 
 <div id="list" class="grid"></div>
 
+<!-- 🔵 BOUTON ACCUEIL GLOBAL -->
+<a id="homeBtn" href="https://helepmoney.vercel.app/">🏠 Accueil</a>
+
 <script>
 
-/* 🔥 TON LIEN FIXE OFFICIEL */
 const SITE = "https://helepmoney.vercel.app/";
 
-/* DATA */
+const endYear = new Date(new Date().getFullYear(),11,31,23,59,59).getTime();
+
 const baseData = [
 {
 id:"card1",
@@ -198,20 +186,14 @@ mtnImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
 }
 ];
 
-const list=document.getElementById("list");
+const list = document.getElementById("list");
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
 
-/* 🔥 COPY FIX 100% */
-function copyLink(url){
-navigator.clipboard.writeText(url).then(()=>{
-alert("🔗 Lien copié !");
-}).catch(()=>{
-prompt("Copie manuelle :", url);
-});
-}
+/* ================= HOME ================= */
+function renderHome(data){
 
-/* RENDER */
-function render(data){
-list.innerHTML="";
+list.innerHTML = "";
 
 data.forEach(c=>{
 
@@ -225,17 +207,19 @@ list.innerHTML += `
 
 <div class="avatar"><img src="${c.photo}"></div>
 
-<div class="box"><i class="fa fa-user"></i>
-<div><div class="label">PROPRIÉTAIRE</div>
-<div class="value">${c.owner}</div></div></div>
+<div class="box">
+<i class="fa fa-user"></i>
+<div>
+<div class="label">PROPRIÉTAIRE</div>
+<div class="value">${c.owner}</div>
+</div>
+</div>
 
 <div class="box"><img src="${c.orangeImg}">
-<div><div class="label">ORANGE MONEY</div>
-<div class="value">${c.orange}</div></div></div>
+<div><div class="label">ORANGE MONEY</div><div class="value">${c.orange}</div></div></div>
 
 <div class="box"><img src="${c.mtnImg}">
-<div><div class="label">MTN MONEY</div>
-<div class="value">${c.mtn}</div></div></div>
+<div><div class="label">MTN MONEY</div><div class="value">${c.mtn}</div></div></div>
 
 <a class="btn" href="${c.site}" target="_blank">🌐 Site</a>
 <a class="btn" href="tel:${c.phone}">📞 Appeler</a>
@@ -243,36 +227,97 @@ list.innerHTML += `
 
 <a class="btn" href="${url}">📂 Ouvrir carte</a>
 
-<button class="btn" onclick="copyLink('${url}')">🔗 Copier lien</button>
-
-<div class="timer">⏳ Carte active</div>
+<div class="timer" id="t_${c.id}"></div>
 
 </div>`;
 });
 }
 
-/* SEARCH */
+/* ================= DETAIL ================= */
+function renderDetail(c){
+
+const url = SITE + "?id=" + c.id;
+
+list.innerHTML = `
+<div class="card">
+
+<div class="company">${c.entreprise}</div>
+<div class="job">${c.fonction}</div>
+
+<div class="avatar"><img src="${c.photo}"></div>
+
+<div class="box">
+<div class="value">👤 ${c.owner}</div>
+</div>
+
+<div class="box"><img src="${c.orangeImg}">
+<div><div class="label">ORANGE MONEY</div><div class="value">${c.orange}</div></div></div>
+
+<div class="box"><img src="${c.mtnImg}">
+<div><div class="label">MTN MONEY</div><div class="value">${c.mtn}</div></div></div>
+
+<a class="btn" href="${c.site}" target="_blank">🌐 Site</a>
+<a class="btn" href="tel:${c.phone}">📞 Appeler</a>
+<a class="btn" href="https://wa.me/${c.whatsapp}" target="_blank">💬 WhatsApp</a>
+
+<a class="btn" href="${url}">🔗 Copier lien</a>
+
+</div>`;
+}
+
+/* ================= TIMER ================= */
+setInterval(()=>{
+
+baseData.forEach(c=>{
+const el = document.getElementById("t_"+c.id);
+if(!el) return;
+
+const diff = endYear - Date.now();
+
+if(diff <= 0){
+el.innerHTML = "🔒 EXPIRÉE";
+return;
+}
+
+const d = Math.floor(diff/86400000);
+const h = Math.floor((diff%86400000)/3600000);
+const m = Math.floor((diff%3600000)/60000);
+const s = Math.floor((diff%60000)/1000);
+
+el.innerHTML = `⏳ ${d}j ${h}h ${m}m ${s}s`;
+});
+
+},1000);
+
+/* ================= SEARCH ================= */
 function searchCards(){
-const q=document.getElementById("search").value.toLowerCase();
-render(baseData.filter(c =>
+const q = document.getElementById("search").value.toLowerCase();
+
+const filtered = baseData.filter(c =>
 c.entreprise.toLowerCase().includes(q) ||
 c.owner.toLowerCase().includes(q)
-));
+);
+
+renderHome(filtered);
 }
 
-/* INIT */
-render(baseData);
+/* ================= HOME BUTTON CONTROL ================= */
+function updateHomeBtn(){
+const id = new URLSearchParams(window.location.search).get("id");
+document.getElementById("homeBtn").style.display = id ? "block" : "none";
+}
 
-/* PAGE UNIQUE */
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-
+/* ================= INIT ================= */
 if(id){
 const c = baseData.find(x=>x.id===id);
-if(c){
-render([c]);
+if(c) renderDetail(c);
+else renderHome(baseData);
+}else{
+renderHome(baseData);
 }
-}
+
+updateHomeBtn();
+
 </script>
 
 </body>
