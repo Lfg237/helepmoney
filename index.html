@@ -16,20 +16,18 @@ color:white;
 padding:20px;
 }
 
-/* ===== TITLE ===== */
 h2{
 text-align:center;
-margin-bottom:20px;
+margin-bottom:15px;
 background:linear-gradient(45deg,#ff6600,#ff00cc,#00ffee);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
-/* ===== SEARCH ===== */
 .searchBox{
 display:flex;
 gap:10px;
-margin-bottom:20px;
+margin-bottom:15px;
 }
 
 .searchBox input{
@@ -37,7 +35,6 @@ flex:1;
 padding:10px;
 border-radius:10px;
 border:none;
-outline:none;
 background:#111;
 color:white;
 }
@@ -51,14 +48,12 @@ color:white;
 cursor:pointer;
 }
 
-/* ===== GRID ===== */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
 gap:20px;
 }
 
-/* ===== CARD ===== */
 .card{
 background:rgba(255,255,255,0.08);
 border:1px solid rgba(255,255,255,0.15);
@@ -101,7 +96,6 @@ gap:10px;
 .value{font-weight:bold;font-size:14px;}
 .label{font-size:12px;color:#bbb;}
 
-/* BUTTON */
 .btn{
 display:block;
 margin-top:8px;
@@ -115,15 +109,37 @@ font-weight:bold;
 cursor:pointer;
 }
 
-/* TIMER */
 .timer{
 margin-top:10px;
 text-align:center;
 padding:10px;
 background:rgba(255,255,255,0.08);
 border-radius:14px;
-font-size:13px;
 color:#00ffee;
+}
+/* ===== BANDE ANNONCE ===== */
+.banner{
+width:100%;
+margin-bottom:15px;
+background:rgba(0,0,0,0.6);
+border:1px solid rgba(255,255,255,0.1);
+border-radius:12px;
+overflow:hidden;
+padding:10px 0;
+}
+
+.banner span{
+display:inline-block;
+white-space:nowrap;
+padding-left:100%;
+font-weight:bold;
+color:#00ffee;
+animation:scrollBanner 18s linear infinite;
+}
+
+@keyframes scrollBanner{
+0%{transform:translateX(0);}
+100%{transform:translateX(-100%);}
 }
 </style>
 </head>
@@ -131,17 +147,26 @@ color:#00ffee;
 <body>
 
 <h2>📇 MULTI CARTES PREMIUM 2026</h2>
+<!-- 🔥 BANDE ANNONCE -->
+<div class="banner">
+  <span>
+    ✨ ETS LESFACILITATEURS GROUPE • Carte Premium 2026 • Création de cartes digitales • Paiement Mobile Money • Support WhatsApp +237670035609 • Design Pro Multi-cartes ✨
+  </span>
+</div>
 
-<div class="searchBox" id="searchBox">
+<div class="searchBox">
 <input id="search" placeholder="🔎 rechercher une carte...">
 <button onclick="searchCards()"><i class="fa fa-search"></i></button>
 </div>
 
-<div class="grid" id="list"></div>
+<div id="list" class="grid"></div>
 
 <script>
 
-/* ================= DATA ================= */
+/* 🔥 TON LIEN FIXE OFFICIEL */
+const SITE = "https://helepmoney.vercel.app/";
+
+/* DATA */
 const baseData = [
 {
 id:"card1",
@@ -150,7 +175,7 @@ fonction:"Solutions Digitales Premium",
 owner:"Michel Kono",
 phone:"+237670035609",
 whatsapp:"237670035609",
-site:"https://helepmoney.vercel.app/",
+site:SITE,
 photo:"https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/InShot_20260515_231032533.jpg",
 orange:"+237670035609",
 mtn:"+237651475255",
@@ -164,60 +189,37 @@ fonction:"Marketing Digital",
 owner:"Sarah N",
 phone:"+237650000001",
 whatsapp:"237650000001",
-site:"https://helepmoney.vercel.app/",
+site:SITE,
 photo:"https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/InShot_20260515_231032533.jpg",
 orange:"+237650000001",
 mtn:"+237651111111",
 orangeImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",
 mtnImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
-},
-{
-id:"card3",
-entreprise:"VISION TECH GROUP",
-fonction:"IA & Dev",
-owner:"John Doe",
-phone:"+237652222222",
-whatsapp:"237652222222",
-site:"https://helepmoney.vercel.app/",
-photo:"https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/InShot_20260515_231032533.jpg",
-orange:"+237652222222",
-mtn:"+237653333333",
-orangeImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",
-mtnImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
 }
 ];
 
-const list = document.getElementById("list");
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
+const list=document.getElementById("list");
 
-const duration = 8760 * 60 * 60 * 1000;
-
-/* ================= COPY ================= */
+/* 🔥 COPY FIX 100% */
 function copyLink(url){
-navigator.clipboard.writeText(url)
-.then(()=>alert("🔗 Lien copié"))
-.catch(()=>alert("Erreur copie"));
+navigator.clipboard.writeText(url).then(()=>{
+alert("🔗 Lien copié !");
+}).catch(()=>{
+prompt("Copie manuelle :", url);
+});
 }
 
-/* ================= RENDER CARD ================= */
-function renderCard(c){
+/* RENDER */
+function render(data){
+list.innerHTML="";
 
-const url = window.location.origin + window.location.pathname + "?id=" + c.id;
+data.forEach(c=>{
 
-const startKey = "start_" + c.id;
-let start = localStorage.getItem(startKey);
-if(!start){
-start = Date.now();
-localStorage.setItem(startKey,start);
-}
+const url = SITE + "?id=" + c.id;
 
-const end = parseInt(start) + duration;
+list.innerHTML += `
+<div class="card">
 
-const div = document.createElement("div");
-div.className = "card";
-
-div.innerHTML = `
 <div class="company">${c.entreprise}</div>
 <div class="job">${c.fonction}</div>
 
@@ -239,79 +241,38 @@ div.innerHTML = `
 <a class="btn" href="tel:${c.phone}">📞 Appeler</a>
 <a class="btn" href="https://wa.me/${c.whatsapp}" target="_blank">💬 WhatsApp</a>
 
-<button class="btn" onclick="copyLink('${url}')">🔗 Copier lien</button>
 <a class="btn" href="${url}">📂 Ouvrir carte</a>
 
-<div class="timer" id="t_${c.id}">...</div>
-`;
+<button class="btn" onclick="copyLink('${url}')">🔗 Copier lien</button>
 
-return div;
-}
+<div class="timer">⏳ Carte active</div>
 
-/* ================= TIMER ================= */
-setInterval(()=>{
-
-baseData.forEach(c=>{
-
-const el = document.getElementById("t_"+c.id);
-if(!el) return;
-
-let start = localStorage.getItem("start_"+c.id);
-if(!start){
-start = Date.now();
-localStorage.setItem("start_"+c.id,start);
-}
-
-const end = parseInt(start) + duration;
-const diff = end - Date.now();
-
-if(diff <= 0){
-el.innerHTML = "🔒 EXPIRÉE";
-return;
-}
-
-const d = Math.floor(diff/(1000*60*60*24));
-const h = Math.floor((diff/(1000*60*60))%24);
-const m = Math.floor((diff/(1000*60))%60);
-const s = Math.floor((diff/1000)%60);
-
-el.innerHTML = `⏳ ${d}j ${h}h ${m}m ${s}s`;
-
+</div>`;
 });
+}
 
-},1000);
-
-/* ================= SEARCH ================= */
+/* SEARCH */
 function searchCards(){
-const q = document.getElementById("search").value.toLowerCase();
-list.innerHTML = "";
-
-baseData
-.filter(c =>
+const q=document.getElementById("search").value.toLowerCase();
+render(baseData.filter(c =>
 c.entreprise.toLowerCase().includes(q) ||
 c.owner.toLowerCase().includes(q)
-)
-.forEach(c => list.appendChild(renderCard(c)));
+));
 }
 
-/* ================= MODE ================= */
+/* INIT */
+render(baseData);
+
+/* PAGE UNIQUE */
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
 if(id){
-
-const card = baseData.find(c=>c.id===id);
-
-if(card){
-document.getElementById("searchBox").style.display="none";
-list.appendChild(renderCard(card));
+const c = baseData.find(x=>x.id===id);
+if(c){
+render([c]);
 }
-
-}else{
-
-baseData.forEach(c=>{
-list.appendChild(renderCard(c));
-});
-
 }
-
 </script>
 
 </body>
