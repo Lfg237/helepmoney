@@ -11,7 +11,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
 <style>
 
-/* ===== BASE ===== */
 *{
 margin:0;
 padding:0;
@@ -133,8 +132,6 @@ text-align:center;
 padding:10px;
 border-radius:12px;
 }
-
-/* ===== BANDE ANNONCE (OK) ===== */
 .ads{
 position:fixed;
 bottom:0;
@@ -143,6 +140,8 @@ width:100%;
 background:linear-gradient(90deg,#000,#111,#000);
 border-top:3px solid #ff6600;
 z-index:9999;
+
+/* 🔥 CORRECTION IMPORTANTE */
 height:55px;
 display:flex;
 align-items:center;
@@ -157,6 +156,8 @@ font-weight:900;
 font-size:18px;
 color:#fff;
 letter-spacing:1px;
+
+/* 🔥 meilleure fluidité */
 padding-left:100%;
 animation:scroll 25s linear infinite;
 line-height:55px;
@@ -166,7 +167,45 @@ line-height:55px;
 0%{transform:translateX(0);}
 100%{transform:translateX(-100%);}
 }
+/* ===== CONTACT BAR ===== */
+.contact-bar{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
 
+.contact-btn{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:bold;
+  color:#fff;
+  background:#222;
+  transition:0.3s;
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+.contact-btn i{
+  font-size:18px;
+}
+
+.contact-btn:hover{
+  transform:scale(1.05);
+}
+
+/* couleurs spécifiques */
+.contact-btn.whatsapp{
+  background:#25D366;
+}
+
+.contact-btn.web{
+  background:#1e90ff;
+}
 </style>
 </head>
 
@@ -210,6 +249,28 @@ line-height:55px;
 <div class="value" id="mtn"></div>
 </div>
 </div>
+<!-- ================= CONTACT RAPIDE ================= -->
+<div class="contact-bar">
+
+  <!-- Téléphone -->
+  <a href="tel:+237670035609" class="contact-btn">
+    <i class="fa-solid fa-phone"></i>
+    Appeler
+  </a>
+
+  <!-- WhatsApp -->
+  <a href="https://wa.me/237670035609" target="_blank" class="contact-btn whatsapp">
+    <i class="fa-brands fa-whatsapp"></i>
+    WhatsApp
+  </a>
+
+  <!-- Site web -->
+  <a href="https://ton-site-web.com" target="_blank" class="contact-btn web">
+    <i class="fa-solid fa-globe"></i>
+    Site web
+  </a>
+
+</div>
 
 <!-- SEARCH -->
 <div class="searchBox">
@@ -219,7 +280,7 @@ line-height:55px;
 </button>
 </div>
 
-<!-- SHARE -->
+<!-- SHARE UNIQUE -->
 <button class="copyBtn" onclick="shareNow()">
 🔗 Partager cette carte de visite
 </button>
@@ -233,9 +294,8 @@ line-height:55px;
 <div class="status" id="statusBox"></div>
 
 </div>
-
-<!-- BANDE ANNONCE -->
 <div class="ads">
+
 <span>
 ✨ ETS LESFACILITATEURS GROUPE • Carte digitale premium 2026 • WhatsApp : +237670035609 • Design moderne • Partage intelligent ✨
 </span>
@@ -248,7 +308,7 @@ const entreprise="ETS LESFACILITATEURS GROUPE";
 const fonction="Solutions Digitales Premium";
 const proprietaire="Michel Kono";
 
-const orangeMoney="+237670035609";
+const orangeMoney="+237670035609 ,kon";
 const mtnMoney="+237651475255";
 
 const photo="https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/InShot_20260515_231032533.jpg";
@@ -267,22 +327,15 @@ avatar.src=photo;
 orangeImg.src=orangeImage;
 mtnImg.src=mtnImage;
 
-/* ===== SHARE FIXED ===== */
-function createID(){
-return Math.random().toString(36).substring(2,10).toUpperCase();
-}
-
-const userID=createID();
-
-/* 🔥 lien corrigé */
-const shareURL="https://helepmoney.vercel.app/?id="+userID;
+/* ===== SHARE ===== */
+const shareURL=window.location.href;
 
 function shareNow(){
 navigator.clipboard.writeText(shareURL);
 alert("Lien copié !");
 }
 
-/* ===== SEARCH ===== */
+/* ===== SEARCH INTERNE ===== */
 function searchNow(){
 const q=document.getElementById("searchInput").value.toLowerCase();
 
@@ -310,13 +363,14 @@ el.style.background="rgba(255,255,255,0.06)";
 if(!found) alert("Aucun résultat");
 }
 
-/* ===== TIMER ===== */
-const duration=(365*24*60*60*1000)+(60*60*1000);
-const end=Date.now()+duration;
+/* ===== TIMER 1 AN + 1 H ===== */
+const duration = (365*24*60*60*1000) + (60*60*1000);
+const end = Date.now() + duration;
 
 const countdown=document.getElementById("countdown");
 
 setInterval(()=>{
+
 const diff=end-Date.now();
 
 if(diff<=0){
@@ -333,8 +387,8 @@ countdown.innerHTML=`${d}j ${h}h ${m}m ${s}s`;
 
 },1000);
 
-/* STATUS FIX */
-document.getElementById("statusBox").innerText="🟢 CARTE ACTIVE";
+/* STATUS */
+statusBox.innerText="🟢 CARTE ACTIVE";
 
 </script>
 
