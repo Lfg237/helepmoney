@@ -290,7 +290,7 @@ list.innerHTML = `
 <a class="btn" href="tel:${c.phone}">📞 Appeler</a>
 <a class="btn" href="https://wa.me/${c.whatsapp}" target="_blank">💬 WhatsApp</a>
 
-<a class="btn" href="${url}">🔗 Copier lien</a>
+<button class="btn" onclick="copyLink('${url}')">🔗 Copier lien</button>
 
 </div>`;
 }
@@ -347,6 +347,39 @@ renderHome(baseData);
 }
 
 updateHomeBtn();
+function copyLink(url){
+
+if(navigator.clipboard && window.isSecureContext){
+
+navigator.clipboard.writeText(url)
+.then(()=>alert("✅ Lien copié !"))
+.catch(()=>fallbackCopy(url));
+
+}else{
+fallbackCopy(url);
+}
+
+}
+
+function fallbackCopy(text){
+
+const area=document.createElement("textarea");
+
+area.value=text;
+area.style.position="fixed";
+area.style.left="-9999px";
+
+document.body.appendChild(area);
+
+area.focus();
+area.select();
+
+document.execCommand("copy");
+
+document.body.removeChild(area);
+
+alert("✅ Lien copié !");
+}
 
 </script>
 
