@@ -2,365 +2,334 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>♥️ HelepMoney</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Carte Premium 2026</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
 <style>
-  
-body{margin:0;font-family:'Poppins',sans-serif;background:#0b0f19;color:#f1f5f9;display:flex;justify-content:center;padding:20px;}
-.container{background:#141b2e;padding:20px;border-radius:20px;width:95%;max-width:800px;box-shadow:0 0 20px rgba(0,0,0,0.5);}
-header{display:flex;align-items:center;gap:10px;margin-bottom:15px;}
-header img{width:40px;height:40px;}
-input,select,button,textarea{padding:10px;margin:5px;border-radius:8px;border:none;outline:none;font-size:14px;width:100%;}
-textarea{resize:none;}
-button{background:linear-gradient(90deg,#2563eb,#10b981);color:#fff;font-weight:bold;cursor:pointer;transition:0.3s;}
-button:hover{opacity:0.9;transform:scale(0.98);}
-.info,.valid{margin-top:15px;padding:10px;border-radius:10px;text-align:left;}
-.info{background:#1f2937;}
-.valid{background:#10b98133;color:#10b981;}
-.hidden{display:none;}
-#profile-pic{width:100px;height:100px;border-radius:50%;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;}
-table{width:100%;border-collapse:collapse;margin-top:10px;}
-th,td{padding:8px;text-align:left;border-bottom:1px solid #333;}
-#accounts-list{margin-top:10px;max-height:200px;overflow-y:auto;background:#1f2937;padding:10px;border-radius:10px;}
-#accounts-list div{padding:5px;cursor:pointer;border-bottom:1px solid #333;}
-#accounts-list div:hover{background:#2563eb33;}
-#ads-display div{padding:5px;margin:5px 0;background:#2563eb33;border-radius:5px;}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#050816;
+overflow-x:hidden;
+overflow-y:auto;
+padding:20px;
+color:white;
+}
+
+/* ===== FOND ===== */
+.bg{position:fixed;inset:0;z-index:-5;}
+.bubble{position:absolute;border-radius:50%;filter:blur(50px);opacity:0.6;animation:float 12s infinite linear;}
+.b1{width:250px;height:250px;background:#ff6600;top:10%;left:5%;}
+.b2{width:300px;height:300px;background:#00ffee;right:5%;top:30%;animation-duration:18s;}
+.b3{width:200px;height:200px;background:#ff00cc;bottom:5%;left:30%;animation-duration:20s;}
+
+@keyframes float{
+0%{transform:translateY(0) rotate(0);}
+50%{transform:translateY(-40px) rotate(180deg);}
+100%{transform:translateY(0) rotate(360deg);}
+}
+
+/* ===== CARD ===== */
+.card{
+width:100%;
+max-width:370px;
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.15);
+backdrop-filter:blur(25px);
+border-radius:30px;
+padding:22px;
+}
+
+/* ===== TEXTES ===== */
+.company{text-align:center;font-size:26px;font-weight:bold;text-transform:uppercase;}
+.job{text-align:center;font-size:14px;color:#ddd;margin-bottom:15px;}
+
+.avatar{width:110px;height:110px;margin:auto;border-radius:50%;overflow:hidden;margin-bottom:15px;}
+.avatar img{width:100%;height:100%;object-fit:cover;}
+
+.box{
+background:rgba(255,255,255,0.06);
+padding:14px;
+border-radius:18px;
+margin-bottom:12px;
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.box img{width:28px;height:28px;border-radius:8px;}
+
+.label{font-size:13px;color:#bbb;}
+.value{font-weight:bold;font-size:15px;}
+
+/* ===== SEARCH ===== */
+.searchBox{
+display:flex;
+gap:10px;
+padding:12px;
+border-radius:18px;
+background:rgba(255,255,255,0.12);
+}
+
+.searchBox input{
+flex:1;
+padding:10px;
+border:none;
+outline:none;
+border-radius:10px;
+background:rgba(0,0,0,0.3);
+color:white;
+}
+
+.searchBtn{
+width:50px;
+border:none;
+border-radius:12px;
+background:linear-gradient(45deg,#ff6600,#ff00cc);
+color:white;
+cursor:pointer;
+}
+
+/* ===== BUTTON ===== */
+.copyBtn{
+width:100%;
+margin-top:10px;
+padding:12px;
+border:none;
+border-radius:14px;
+background:linear-gradient(45deg,#ff6600,#ff00cc);
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* ===== TIMER ===== */
+.timer{
+margin-top:12px;
+text-align:center;
+padding:12px;
+border-radius:14px;
+background:rgba(255,255,255,0.08);
+}
+
+.status{
+margin-top:12px;
+text-align:center;
+padding:10px;
+border-radius:12px;
+}
+.ads{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:linear-gradient(90deg,#000,#111,#000);
+border-top:3px solid #ff6600;
+z-index:9999;
+
+/* 🔥 CORRECTION IMPORTANTE */
+height:55px;
+display:flex;
+align-items:center;
+overflow:hidden;
+padding:0;
+}
+
+.ads span{
+display:inline-block;
+white-space:nowrap;
+font-weight:900;
+font-size:18px;
+color:#fff;
+letter-spacing:1px;
+
+/* 🔥 meilleure fluidité */
+padding-left:100%;
+animation:scroll 25s linear infinite;
+line-height:55px;
+}
+
+@keyframes scroll{
+0%{transform:translateX(0);}
+100%{transform:translateX(-100%);}
+}
 </style>
 </head>
+
 <body>
-<div class="container">
-<header>
-<img src="https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/file_00000000def061f99f722813d5358de9.png" alt="HelepMoney">
-<h2>💚 HelepMoney</h2>
-</header>
-☎️ PARTAGER VOTRE ADRESSE POUR PLUS DE VISIBILITÉ ET CONTACT FACILE PRÊT DE VOTRE LOCALISATION ⛳
-💰 récolte des fonds en ligne 🛒
-💎 adresse des ouvriers et autres chercheurs d'emplois partout au Cameroun 🎲créé ton compte gratuitement  🦺🛠️🥾
-<!-- HOME -->
-<div id="home-section">
-<button id="btn-create">➕ Créer un compte</button>
-<button id="btn-admin">🛠️ Admin</button>
-<button id="btn-toggle-list">📋 Liste des comptes</button>
-<div id="accounts-list" class="hidden"></div>
-<div class="valid" id="home-msg" style="display:none;"></div>
+
+<div class="bg">
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
 </div>
 
-<!-- CREATE ACCOUNT -->
-<div id="create-section" class="hidden">
-<h3>Créer un nouveau compte</h3>
-<input type="text" id="new-name" placeholder="Nom">
-<input type="text" id="new-phone" placeholder="Numéro mobile">
-<input type="text" id="new-company" placeholder="Entreprise">
-<input type="text" id="new-services" placeholder="Prestations">
-<h4>Bénéficiaires</h4>
-<div id="beneficiaries-list"></div>
-<input type="text" id="benef-name" placeholder="Nom bénéficiaire">
-<input type="text" id="benef-phone" placeholder="Numéro bénéficiaire">
-<select id="benef-type">
-<option value="momo">Momo</option>
-<option value="om">Orange Money</option>
-</select>
-<button id="btn-add-benef">➕ Ajouter bénéficiaire</button>
-<hr>
-<button id="btn-create-account">💾 Créer</button>
-<button id="btn-back1">🏠 Retour</button>
-<div class="valid" id="create-msg" style="display:none;"></div>
+<div class="card">
+
+<div class="company" id="company"></div>
+<div class="job" id="job"></div>
+
+<div class="avatar">
+<img id="avatar">
 </div>
 
-<!-- USER SECTION -->
-<div id="user-section" class="hidden">
-<img id="profile-pic" src="https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/file_00000000def061f99f722813d5358de9.png" alt="Photo de profil">
-<input type="file" id="upload-file">
-<button id="btn-upload">📤 Modifier ma photo</button>
-
-<div class="info">
-Nom : <span id="user-name"></span><br>
-Numéro : <span id="user-phone"></span><br>
-Entreprise : <span id="user-company"></span><br>
-Prestations : <span id="user-services"></span><br>
-ID : <span id="user-id"></span>
+<div class="box">
+<i class="fa-solid fa-user"></i>
+<div>
+<div class="label">PROPRIÉTAIRE</div>
+<div class="value" id="owner"></div>
+</div>
 </div>
 
-<h3>Bénéficiaires</h3>
-<div id="user-beneficiaries"></div>
-
-<button id="btn-edit-toggle">✏️ Modifier mon compte</button>
-<div id="edit-form" class="hidden">
-<input type="text" id="edit-name" placeholder="Nom">
-<input type="text" id="edit-phone" placeholder="Numéro mobile">
-<input type="text" id="edit-company" placeholder="Entreprise">
-<input type="text" id="edit-services" placeholder="Prestations">
-<h4>Ajouter bénéficiaire</h4>
-<input type="text" id="edit-benef-name" placeholder="Nom bénéficiaire">
-<input type="text" id="edit-benef-phone" placeholder="Numéro bénéficiaire">
-<select id="edit-benef-type">
-<option value="momo">Momo</option>
-<option value="om">Orange Money</option>
-</select>
-<button id="btn-add-edit-benef">➕ Ajouter bénéficiaire</button>
+<div class="box" id="orangeBox">
+<img id="orangeImg">
+<div>
+<div class="label">ORANGE MONEY</div>
+<div class="value" id="orange"></div>
+</div>
 </div>
 
-<hr>
-<h3>💸 Vérification Paiement Mobile Money</h3>
-<label>
-<input type="radio" name="verifyMode" value="auto" checked> 🔄 Mode automatique
-</label>
-<label>
-<input type="radio" name="verifyMode" value="manual"> ✏️ Mode manuel
-</label>
-
-<div id="manual-input">
-<select id="beneficiary"></select>
-<textarea id="message" rows="4" placeholder="Collez ici le message Mobile Money reçu"></textarea>
+<div class="box" id="mtnBox">
+<img id="mtnImg">
+<div>
+<div class="label">MTN MONEY</div>
+<div class="value" id="mtn"></div>
 </div>
-<button id="btn-verify">✅ Vérifier le paiement</button>
-<div class="valid" id="payment-status" style="display:none;"></div>
-
-<button id="btn-share">🔗 Copier le lien de ma page</button>
-<div class="valid" id="share-status" style="display:none;"></div>
-
-<hr>
-<h3>🎬 Bande-annonce</h3>
-<div id="ads-display"></div>
-
-<hr>
-<button id="btn-back-home">🏠 Retour à l'accueil</button>
 </div>
 
-<!-- ADMIN SECTION -->
-<div id="admin-section" class="hidden">
-<button id="btn-back-home2">🏠 Retour à l'accueil</button>
-<h3>📋 Tableau Administrateur</h3>
-<table>
-<thead><tr><th>Nom</th><th>Numéro</th><th>Entreprise</th><th>Prestations</th><th>Bloqué</th><th>Actions</th></tr></thead>
-<tbody id="users-table"></tbody>
-</table>
+<!-- SEARCH -->
+<div class="searchBox">
+<input id="searchInput" placeholder="🔎 recherche interne">
+<button class="searchBtn" onclick="searchNow()">
+<i class="fa fa-search"></i>
+</button>
+</div>
 
-<h3>🎬 Bande-annonce publicitaire</h3>
-<input type="text" id="ad-text" placeholder="Écrire une annonce">
-<button id="btn-add-ad">➕ Ajouter annonce</button>
-<table>
-<thead><tr><th>Annonce</th><th>Actions</th></tr></thead>
-<tbody id="ads-table"></tbody>
-</table>
+<!-- SHARE UNIQUE -->
+<button class="copyBtn" onclick="shareNow()">
+🔗 Partager cette carte de visite
+</button>
+
+<!-- TIMER -->
+<div class="timer">
+⏳ Expiration :
+<span id="countdown"></span>
+</div>
+
+<div class="status" id="statusBox"></div>
+
+</div>
+<div class="ads">
+
+<span>
+✨ ETS LESFACILITATEURS GROUPE • Carte digitale premium 2026 • WhatsApp : +237670035609 • Design moderne • Partage intelligent ✨
+</span>
 </div>
 
 <script>
-// LOCAL STORAGE LOGIC
-let users = JSON.parse(localStorage.getItem("helepmoney_users")) || [];
-let userData = null;
-let benefList = [];
 
-// ADS
-let ads = JSON.parse(localStorage.getItem("helepmoney_ads")) || [];
+/* ===== DATA ===== */
+const entreprise="ETS LESFACILITATEURS GROUPE";
+const fonction="Solutions Digitales Premium";
+const proprietaire="Michel Kono";
 
-// CHECK URL PARAM FOR AUTO OPEN USER PAGE
-const params = new URLSearchParams(window.location.search);
-const abonneID = params.get("abonne");
-if(abonneID){
-  userData = users.find(u=>u.id==abonneID);
-  if(userData) showSection("user");
+const orangeMoney="+237670035609 ,kon";
+const mtnMoney="+237651475255";
+
+const photo="https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/InShot_20260515_231032533.jpg";
+const orangeImage="https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg";
+const mtnImage="https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png";
+
+/* ===== INIT ===== */
+company.innerText=entreprise;
+job.innerText=fonction;
+owner.innerText=proprietaire;
+
+orange.innerText=orangeMoney;
+mtn.innerText=mtnMoney;
+
+avatar.src=photo;
+orangeImg.src=orangeImage;
+mtnImg.src=mtnImage;
+
+/* ===== SHARE ===== */
+const shareURL=window.location.href;
+
+function shareNow(){
+navigator.clipboard.writeText(shareURL);
+alert("Lien copié !");
 }
 
-// NAVIGATION
-function showSection(sec){
-["home","create","user","admin"].forEach(s=>document.getElementById(s+"-section").classList.add("hidden"));
-document.getElementById(sec+"-section").classList.remove("hidden");
-displayUserInfo();
-loadUsersTable();
-loadAdsTable();
-displayAds();
+/* ===== SEARCH INTERNE ===== */
+function searchNow(){
+const q=document.getElementById("searchInput").value.toLowerCase();
+
+const data=[
+["orangeBox",orangeMoney],
+["mtnBox",mtnMoney],
+["company",entreprise],
+["job",fonction],
+["owner",proprietaire]
+];
+
+let found=false;
+
+data.forEach(([id,text])=>{
+let el=document.getElementById(id);
+if(text.toLowerCase().includes(q)){
+el.scrollIntoView({behavior:"smooth"});
+el.style.background="rgba(255,102,0,0.4)";
+found=true;
+}else{
+el.style.background="rgba(255,255,255,0.06)";
 }
-document.getElementById("btn-create").onclick = ()=> {showSection("create"); benefList=[]; updateBenefList();};
-document.getElementById("btn-back1").onclick = ()=> showSection("home");
-document.getElementById("btn-back-home").onclick = ()=> showSection("home");
-document.getElementById("btn-back-home2").onclick = ()=> showSection("home");
-document.getElementById("btn-admin").onclick = ()=> {
-  const code = prompt("Code Admin:");
-  if(code==="233233") showSection("admin");
-  else alert("❌ Code incorrect");
-};
-
-// CREATE ACCOUNT
-document.getElementById("btn-add-benef").onclick = ()=>{
-const n=document.getElementById("benef-name").value.trim();
-const p=document.getElementById("benef-phone").value.trim();
-const t=document.getElementById("benef-type").value;
-if(!n||!p){alert("Nom et numéro obligatoires"); return;}
-benefList.push({name:n,phone:p,type:t});
-updateBenefList();
-document.getElementById("benef-name").value="";
-document.getElementById("benef-phone").value="";
-};
-function updateBenefList(){
-const div=document.getElementById("beneficiaries-list");
-div.innerHTML="";
-benefList.forEach(b=>{const el=document.createElement("div"); el.textContent=`${b.name} - ${b.phone} (${b.type})`; div.appendChild(el);});
-}
-
-document.getElementById("btn-create-account").onclick = ()=>{
-const name=document.getElementById("new-name").value.trim();
-const phone=document.getElementById("new-phone").value.trim();
-const company=document.getElementById("new-company").value.trim();
-const services=document.getElementById("new-services").value.trim();
-if(!name||!phone){alert("Nom et numéro obligatoires"); return;}
-userData={id:Date.now(), name, phone, company, services, beneficiaries:benefList, blocked:false};
-users.push(userData);
-localStorage.setItem("helepmoney_users", JSON.stringify(users));
-alert("✅ Compte créé !");
-showSection("user");
-displayUserInfo();
-updateBeneficiarySelect();
-};
-
-// DISPLAY USER INFO
-function displayUserInfo(){
-if(!userData) return;
-document.getElementById("user-name").textContent=userData.name;
-document.getElementById("user-phone").textContent=userData.phone;
-document.getElementById("user-company").textContent=userData.company||"-";
-document.getElementById("user-services").textContent=userData.services||"-";
-document.getElementById("user-id").textContent=userData.id;
-const div=document.getElementById("user-beneficiaries"); div.innerHTML="";
-userData.beneficiaries.forEach(b=>{const el=document.createElement("div"); el.textContent=`${b.name} - ${b.phone} (${b.type})`; div.appendChild(el);});
-updateBeneficiarySelect();
-}
-
-// EDIT USER
-document.getElementById("btn-edit-toggle").onclick = ()=>{
-document.getElementById("edit-form").classList.toggle("hidden");
-document.getElementById("edit-name").value=userData.name;
-document.getElementById("edit-phone").value=userData.phone;
-document.getElementById("edit-company").value=userData.company;
-document.getElementById("edit-services").value=userData.services;
-};
-document.getElementById("btn-add-edit-benef").onclick = ()=>{
-const n=document.getElementById("edit-benef-name").value.trim();
-const p=document.getElementById("edit-benef-phone").value.trim();
-const t=document.getElementById("edit-benef-type").value;
-if(!n||!p){alert("Nom et numéro obligatoires !"); return;}
-userData.beneficiaries.push({name:n,phone:p,type:t}); displayUserInfo();
-document.getElementById("edit-benef-name").value=""; document.getElementById("edit-benef-phone").value="";
-};
-
-// SHARE LINK
-document.getElementById("btn-share").onclick = ()=>{
-const link = `${window.location.origin}?abonne=${userData.id}`;
-navigator.clipboard.writeText(link).then(()=>{document.getElementById("share-status").textContent="Lien copié 🔗: "+link; document.getElementById("share-status").style.display="block";});
-};
-
-// VERIFY PAYMENT MANUEL + AUTOMATIQUE
-function updateBeneficiarySelect(){
-const sel=document.getElementById("beneficiary"); sel.innerHTML="";
-if(userData && userData.beneficiaries){
-userData.beneficiaries.forEach(b=>{const opt=document.createElement("option"); opt.value=b.phone; opt.textContent=`${b.name} - ${b.phone} (${b.type})`; sel.appendChild(opt);});
-}
-}
-
-// ADMIN TABLEAU
-function loadUsersTable(){
-const table=document.getElementById("users-table");
-table.innerHTML="";
-users.forEach(u=>{
-const tr=document.createElement("tr");
-tr.innerHTML=`<td>${u.name}</td><td>${u.phone}</td><td>${u.company||'-'}</td><td>${u.services||'-'}</td><td>${u.blocked?'✅':'❌'}</td>
-<td><button onclick="toggleBlock(${u.id})">${u.blocked?'Débloquer':'Bloquer'}</button><button onclick="deleteUser(${u.id})">Supprimer</button></td>`;
-table.appendChild(tr);
 });
-}
-window.toggleBlock = (id)=>{
-users.forEach(u=>{if(u.id===id) u.blocked=!u.blocked;});
-localStorage.setItem("helepmoney_users", JSON.stringify(users));
-loadUsersTable();
-};
-window.deleteUser = (id)=>{
-if(!confirm("Confirmer suppression ?")) return;
-users=users.filter(u=>u.id!==id);
-localStorage.setItem("helepmoney_users", JSON.stringify(users));
-loadUsersTable();
-};
 
-// TOGGLE LISTE DES COMPTES
-const btnToggle = document.getElementById("btn-toggle-list");
-const accountsDiv = document.getElementById("accounts-list");
-function updateAccountsList(){
-  accountsDiv.innerHTML = "";
-  users.forEach(u=>{
-    const div = document.createElement("div");
-    div.textContent = u.name + " - " + u.phone;
-    div.onclick = ()=> {
-      userData = u;
-      localStorage.setItem("helepmoney_user", JSON.stringify(userData));
-      showSection("user");
-    };
-    accountsDiv.appendChild(div);
-  });
-}
-btnToggle.onclick = ()=>{
-  if(accountsDiv.classList.contains("hidden")){
-    updateAccountsList();
-    accountsDiv.classList.remove("hidden");
-  } else {
-    accountsDiv.classList.add("hidden");
-  }
-};
-
-// -----------------------
-// ADS LOGIC
-// -----------------------
-function loadAdsTable() {
-  const table = document.getElementById("ads-table");
-  table.innerHTML = "";
-  ads.forEach((ad, index) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${ad}</td>
-    <td>
-      <button onclick="editAd(${index})">✏️ Modifier</button>
-      <button onclick="deleteAd(${index})">❌ Supprimer</button>
-    </td>`;
-    table.appendChild(tr);
-  });
-}
-document.getElementById("btn-add-ad").onclick = ()=>{
-  const text = document.getElementById("ad-text").value.trim();
-  if(!text){alert("Écrire une annonce"); return;}
-  ads.push(text);
-  localStorage.setItem("helepmoney_ads", JSON.stringify(ads));
-  document.getElementById("ad-text").value="";
-  loadAdsTable();
-  displayAds();
-};
-window.editAd = (index)=>{
-  const newText = prompt("Modifier l'annonce:", ads[index]);
-  if(newText){
-    ads[index] = newText;
-    localStorage.setItem("helepmoney_ads", JSON.stringify(ads));
-    loadAdsTable();
-    displayAds();
-  }
-};
-window.deleteAd = (index)=>{
-  if(!confirm("Confirmer suppression ?")) return;
-  ads.splice(index,1);
-  localStorage.setItem("helepmoney_ads", JSON.stringify(ads));
-  loadAdsTable();
-  displayAds();
-};
-function displayAds(){
-  const div = document.getElementById("ads-display");
-  div.innerHTML = "";
-  ads.forEach(ad=>{
-    const el = document.createElement("div");
-    el.textContent = ad;
-    div.appendChild(el);
-  });
+if(!found) alert("Aucun résultat");
 }
 
-// -----------------------
-// LOAD INIT
-displayAds();
-loadAdsTable();
+/* ===== TIMER 1 AN + 1 H ===== */
+const duration = (365*24*60*60*1000) + (60*60*1000);
+const end = Date.now() + duration;
+
+const countdown=document.getElementById("countdown");
+
+setInterval(()=>{
+
+const diff=end-Date.now();
+
+if(diff<=0){
+countdown.innerHTML="EXPIRÉ";
+return;
+}
+
+const d=Math.floor(diff/86400000);
+const h=Math.floor((diff%86400000)/3600000);
+const m=Math.floor((diff%3600000)/60000);
+const s=Math.floor((diff%60000)/1000);
+
+countdown.innerHTML=`${d}j ${h}h ${m}m ${s}s`;
+
+},1000);
+
+/* STATUS */
+statusBox.innerText="🟢 CARTE ACTIVE";
+
 </script>
-</div>
+
 </body>
 </html>
