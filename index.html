@@ -1,387 +1,413 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Multi Cartes Premium 2026</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
-
-body{
-background:#050816;
-color:white;
-padding:20px;
-}
-
-h2{
-text-align:center;
-margin-bottom:15px;
-background:linear-gradient(45deg,#ff6600,#ff00cc,#00ffee);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
-.searchBox{
-display:flex;
-gap:10px;
-margin-bottom:15px;
-}
-
-.searchBox input{
-flex:1;
-padding:10px;
-border-radius:10px;
-border:none;
-background:#111;
-color:white;
-}
-
-.searchBox button{
-padding:10px 14px;
-border:none;
-border-radius:10px;
-background:linear-gradient(45deg,#ff6600,#ff00cc);
-color:white;
-cursor:pointer;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-gap:20px;
-}
-
-.card{
-background:rgba(255,255,255,0.08);
-border:1px solid rgba(255,255,255,0.15);
-backdrop-filter:blur(25px);
-border-radius:30px;
-padding:22px;
-position:relative;
-overflow:hidden;
-}
-
-.card::before{
-content:"";
-position:absolute;
-width:200px;height:200px;
-background:linear-gradient(45deg,#ff6600,#ff00cc);
-border-radius:50%;
-top:-80px;right:-60px;
-filter:blur(60px);
-opacity:0.4;
-}
-
-.company{text-align:center;font-size:22px;font-weight:bold;text-transform:uppercase;}
-.job{text-align:center;font-size:14px;color:#ddd;margin-bottom:15px;}
-
-.avatar{width:100px;height:100px;margin:auto;border-radius:50%;overflow:hidden;margin-bottom:15px;}
-.avatar img{width:100%;height:100%;object-fit:cover;}
-
-.box{
-background:rgba(255,255,255,0.06);
-padding:12px;
-border-radius:16px;
-margin-bottom:10px;
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-.box img{width:28px;height:28px;border-radius:8px;}
-
-.value{font-weight:bold;font-size:14px;}
-.label{font-size:12px;color:#bbb;}
-
-.btn{
-display:block;
-margin-top:8px;
-padding:10px;
-border-radius:14px;
-background:linear-gradient(45deg,#ff6600,#ff00cc);
-color:white;
-text-decoration:none;
-text-align:center;
-font-weight:bold;
-cursor:pointer;
-}
-
-.timer{
-margin-top:10px;
-text-align:center;
-padding:10px;
-background:rgba(255,255,255,0.08);
-border-radius:14px;
-color:#00ffee;
-}
-
-/* ===== BOUTON ACCUEIL FIXE ===== */
-#homeBtn{
-position:fixed;
-bottom:20px;
-left:20px;
-z-index:9999;
-padding:12px 16px;
-border-radius:14px;
-background:#1e90ff;
-color:white;
-font-weight:bold;
-text-decoration:none;
-display:none;
-}
-
+<!DOCTYPE html>  <html lang="fr">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width,initial-scale=1.0">  
+<title>Multi Cartes Premium 2026</title>  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>  <style>  
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}  
+  
+body{  
+background:#050816;  
+color:white;  
+padding:20px;  
+}  
+  
+h2{  
+text-align:center;  
+margin-bottom:15px;  
+background:linear-gradient(45deg,#ff6600,#ff00cc,#00ffee);  
+-webkit-background-clip:text;  
+-webkit-text-fill-color:transparent;  
+}  
+  
+.searchBox{  
+display:flex;  
+gap:10px;  
+margin-bottom:15px;  
+}  
+  
+.searchBox input{  
+flex:1;  
+padding:10px;  
+border-radius:10px;  
+border:none;  
+background:#111;  
+color:white;  
+}  
+  
+.searchBox button{  
+padding:10px 14px;  
+border:none;  
+border-radius:10px;  
+background:linear-gradient(45deg,#ff6600,#ff00cc);  
+color:white;  
+cursor:pointer;  
+}  
+  
+.grid{  
+display:grid;  
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));  
+gap:20px;  
+}  
+  
+.card{  
+background:rgba(255,255,255,0.08);  
+border:1px solid rgba(255,255,255,0.15);  
+backdrop-filter:blur(25px);  
+border-radius:30px;  
+padding:22px;  
+position:relative;  
+overflow:hidden;  
+}  
+  
+.card::before{  
+content:"";  
+position:absolute;  
+width:200px;height:200px;  
+background:linear-gradient(45deg,#ff6600,#ff00cc);  
+border-radius:50%;  
+top:-80px;right:-60px;  
+filter:blur(60px);  
+opacity:0.4;  
+}  
+  
+.company{text-align:center;font-size:22px;font-weight:bold;text-transform:uppercase;}  
+.job{text-align:center;font-size:14px;color:#ddd;margin-bottom:15px;}  
+  
+.avatar{width:100px;height:100px;margin:auto;border-radius:50%;overflow:hidden;margin-bottom:15px;}  
+.avatar img{width:100%;height:100%;object-fit:cover;}  
+  
+.box{  
+background:rgba(255,255,255,0.06);  
+padding:12px;  
+border-radius:16px;  
+margin-bottom:10px;  
+display:flex;  
+align-items:center;  
+gap:10px;  
+}  
+  
+.box img{width:28px;height:28px;border-radius:8px;}  
+  
+.value{font-weight:bold;font-size:14px;}  
+.label{font-size:12px;color:#bbb;}  
+  
+.btn{  
+display:block;  
+margin-top:8px;  
+padding:10px;  
+border-radius:14px;  
+background:linear-gradient(45deg,#ff6600,#ff00cc);  
+color:white;  
+text-decoration:none;  
+text-align:center;  
+font-weight:bold;  
+cursor:pointer;  
+}  
+  
+.timer{  
+margin-top:10px;  
+text-align:center;  
+padding:10px;  
+background:rgba(255,255,255,0.08);  
+border-radius:14px;  
+color:#00ffee;  
+}  
+  
+/* ===== BOUTON ACCUEIL FIXE ===== */  
+#homeBtn{  
+position:fixed;  
+bottom:20px;  
+left:20px;  
+z-index:9999;  
+padding:12px 16px;  
+border-radius:14px;  
+background:#1e90ff;  
+color:white;  
+font-weight:bold;  
+text-decoration:none;  
+display:none;  
+}  
+  
+  
+.banner{  
+margin:10px 0 15px 0;  
+padding:10px;  
+border-radius:12px;  
+background:linear-gradient(90deg,#ff6600,#ff00cc,#00ffee);  
+overflow:hidden;  
+white-space:nowrap;  
+}  
+  
+.banner-track{  
+display:inline-block;  
+padding-left:100%;  
+animation:scrollBanner 15s linear infinite;  
+font-weight:bold;  
+color:white;  
+}  
+  
+@keyframes scrollBanner{  
+0%{transform:translateX(0);}  
+100%{transform:translateX(-100%);}  
+}  
+/* BOUTON ACCUEIL BANNIÈRE */
 
 .banner{
-margin:10px 0 15px 0;
-padding:10px;
+position:relative;
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.banner-home-btn{
+position:absolute;
+left:10px;
+top:50%;
+transform:translateY(-50%);
+z-index:5;
+
+padding:8px 14px;
 border-radius:12px;
-background:linear-gradient(90deg,#ff6600,#ff00cc,#00ffee);
-overflow:hidden;
-white-space:nowrap;
+
+background:white;
+color:#111;
+
+font-size:13px;
+font-weight:bold;
+text-decoration:none;
+
+box-shadow:0 4px 10px rgba(0,0,0,0.3);
 }
 
 .banner-track{
-display:inline-block;
-padding-left:100%;
-animation:scrollBanner 15s linear infinite;
-font-weight:bold;
-color:white;
+padding-left:170px;
 }
+  
+  
+</style>  </head>  <body>  <h2>📇 CARTE DE VISITE NUMÉRIQUE ILLIMITÉE</h2>  
 
-@keyframes scrollBanner{
-0%{transform:translateX(0);}
-100%{transform:translateX(-100%);}
-}
-
-
-</style>
-</head>
-
-<body>
-
-<h2>📇 CARTE DE VISITE NUMÉRIQUE ILLIMITÉE</h2>
 <div class="banner">
-  <div class="banner-track">
-    ✨ ETS LESFACILITATEURS GROUPE • créé tes cartes de visites numériques illimitées vallable un an renouvelable à 1000xaf 🖼️• WhatsApp +237670035609 • MTN & Orange Money acceptés • Accès rapide • Support 24/7 ✨
-  </div>
+
+<a 
+href="https://lesfacilitateurs.vercel.app/" 
+target="_blank"
+class="banner-home-btn">
+🏠 Accueil
+</a>
+
+<div class="banner-track">
+✨ ETS LESFACILITATEURS GROUPE • créé tes cartes de visites numériques illimitées vallable un an renouvelable à 1000xaf 🖼️• WhatsApp +237670035609 • MTN & Orange Money acceptés • Accès rapide • Support 24/7 ✨
 </div>
 
-<div class="searchBox">
-<input id="search" placeholder="🔎 rechercher une carte...">
-<button onclick="searchCards()"><i class="fa fa-search"></i></button>
 </div>
 
-<div id="list" class="grid"></div>
+<div class="searchBox">  
+<input id="search" placeholder="🔎 rechercher une carte...">  
+<button onclick="searchCards()"><i class="fa fa-search"></i></button>  
+</div>  <div id="list" class="grid"></div>  <!-- 🔵 BOUTON ACCUEIL GLOBAL -->  <a id="homeBtn" href="https://helepmoney.vercel.app/">🏠 Accueil</a>
 
-<!-- 🔵 BOUTON ACCUEIL GLOBAL -->
-<a id="homeBtn" href="https://helepmoney.vercel.app/">🏠 Accueil</a>
-
-<script>
-
-const SITE = "https://helepmoney.vercel.app/";
-
-const endYear = new Date(new Date().getFullYear(),11,31,23,59,59).getTime();
-
-const baseData = [
-{
-id:"card1",
-entreprise:"ETS LESFACILITATEURS GROUPE",
-fonction:"Solutions Digitales Premium",
-owner:"Michel Kono",
-phone:"+237670035609",
-whatsapp:"237670035609",
-site:SITE,
-photo:"https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/InShot_20260515_231032533.jpg",
-orange:"+237656050097",
-mtn:"+237651475255",
-orangeImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",
-mtnImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
-},
-{
-id:"card2",
-entreprise:"SERVICE TRAITEUR ",
-fonction:" hôtellerie, cuisine, pâtisserie",
-owner:"leukeu mdjomo",
-phone:"+237673710461",
-whatsapp:"237 6 21 07 29 73",
-site:SITE,
-photo:"https://raw.githubusercontent.com/Lfg237/image-qui-parle-religieux-/main/6ebed138bd64389b81efff39ef712d87.jpg",
-orange:"+237655050704",
-mtn:"+237673710461",
-orangeImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",
-mtnImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
-}
-];
-
-const list = document.getElementById("list");
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-
-/* ================= HOME ================= */
-function renderHome(data){
-
-list.innerHTML = "";
-
-data.forEach(c=>{
-
-const url = SITE + "?id=" + c.id;
-
-list.innerHTML += `
-<div class="card">
-
-<div class="company">${c.entreprise}</div>
-<div class="job">${c.fonction}</div>
-
-<div class="avatar"><img src="${c.photo}"></div>
-
-<div class="box">
-<i class="fa fa-user"></i>
-<div>
-<div class="label">PROPRIÉTAIRE</div>
-<div class="value">${c.owner}</div>
-</div>
-</div>
-
-<div class="box"><img src="${c.orangeImg}">
-<div><div class="label">ORANGE MONEY</div><div class="value">${c.orange}</div></div></div>
-
-<div class="box"><img src="${c.mtnImg}">
-<div><div class="label">MTN MONEY</div><div class="value">${c.mtn}</div></div></div>
-
-<a class="btn" href="${c.site}" target="_blank">🌐 Site</a>
-<a class="btn" href="tel:${c.phone}">📞 Appeler</a>
-<a class="btn" href="https://wa.me/${c.whatsapp}" target="_blank">💬 WhatsApp</a>
-
-<a class="btn" href="${url}">📂 Ouvrir carte</a>
-
-<div class="timer" id="t_${c.id}"></div>
-
-</div>`;
-});
-}
-
-/* ================= DETAIL ================= */
-function renderDetail(c){
-
-const url = SITE + "?id=" + c.id;
-
-list.innerHTML = `
-<div class="card">
-
-<div class="company">${c.entreprise}</div>
-<div class="job">${c.fonction}</div>
-
-<div class="avatar"><img src="${c.photo}"></div>
-
-<div class="box">
-<div class="value">👤 ${c.owner}</div>
-</div>
-
-<div class="box"><img src="${c.orangeImg}">
-<div><div class="label">ORANGE MONEY</div><div class="value">${c.orange}</div></div></div>
-
-<div class="box"><img src="${c.mtnImg}">
-<div><div class="label">MTN MONEY</div><div class="value">${c.mtn}</div></div></div>
-
-<a class="btn" href="${c.site}" target="_blank">🌐 Site</a>
-<a class="btn" href="tel:${c.phone}">📞 Appeler</a>
-<a class="btn" href="https://wa.me/${c.whatsapp}" target="_blank">💬 WhatsApp</a>
-
-<button class="btn" onclick="copyLink('${url}')">🔗 Copier lien</button>
-
-</div>`;
-}
-
-/* ================= TIMER ================= */
-setInterval(()=>{
-
-baseData.forEach(c=>{
-const el = document.getElementById("t_"+c.id);
-if(!el) return;
-
-const diff = endYear - Date.now();
-
-if(diff <= 0){
-el.innerHTML = "🔒 EXPIRÉE";
-return;
-}
-
-const d = Math.floor(diff/86400000);
-const h = Math.floor((diff%86400000)/3600000);
-const m = Math.floor((diff%3600000)/60000);
-const s = Math.floor((diff%60000)/1000);
-
-el.innerHTML = `⏳ ${d}j ${h}h ${m}m ${s}s`;
-});
-
-},1000);
-
-/* ================= SEARCH ================= */
-function searchCards(){
-const q = document.getElementById("search").value.toLowerCase();
-
-const filtered = baseData.filter(c =>
-c.entreprise.toLowerCase().includes(q) ||
-c.owner.toLowerCase().includes(q)
-);
-
-renderHome(filtered);
-}
-
-/* ================= HOME BUTTON CONTROL ================= */
-function updateHomeBtn(){
-const id = new URLSearchParams(window.location.search).get("id");
-document.getElementById("homeBtn").style.display = id ? "block" : "none";
-}
-
-/* ================= INIT ================= */
-if(id){
-const c = baseData.find(x=>x.id===id);
-if(c) renderDetail(c);
-else renderHome(baseData);
-}else{
-renderHome(baseData);
-}
-
-updateHomeBtn();
-function copyLink(url){
-
-if(navigator.clipboard && window.isSecureContext){
-
-navigator.clipboard.writeText(url)
-.then(()=>alert("✅ Lien copié !"))
-.catch(()=>fallbackCopy(url));
-
-}else{
-fallbackCopy(url);
-}
-
-}
-
-function fallbackCopy(text){
-
-const area=document.createElement("textarea");
-
-area.value=text;
-area.style.position="fixed";
-area.style.left="-9999px";
-
-document.body.appendChild(area);
-
-area.focus();
-area.select();
-
-document.execCommand("copy");
-
-document.body.removeChild(area);
-
-alert("✅ Lien copié !");
-}
-
-</script>
-
-</body>
+<script>  
+  
+const SITE = "https://helepmoney.vercel.app/";  
+  
+const endYear = new Date(new Date().getFullYear(),11,31,23,59,59).getTime();  
+  
+const baseData = [  
+{  
+id:"card1",  
+entreprise:"ETS LESFACILITATEURS GROUPE",  
+fonction:"Solutions Digitales Premium",  
+owner:"Michel Kono",  
+phone:"+237670035609",  
+whatsapp:"237670035609",  
+site:SITE,  
+photo:"https://raw.githubusercontent.com/Lfg237/images-Lesfacilitateurs-/main/InShot_20260515_231032533.jpg",  
+orange:"+237656050097",  
+mtn:"+237651475255",  
+orangeImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",  
+mtnImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"  
+},  
+{  
+id:"card2",  
+entreprise:"SERVICE TRAITEUR ",  
+fonction:" hôtellerie, cuisine, pâtisserie",  
+owner:"leukeu mdjomo",  
+phone:"+237673710461",  
+whatsapp:"237 6 21 07 29 73",  
+site:SITE,  
+photo:"https://raw.githubusercontent.com/Lfg237/image-qui-parle-religieux-/main/6ebed138bd64389b81efff39ef712d87.jpg",  
+orange:"+237655050704",  
+mtn:"+237673710461",  
+orangeImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",  
+mtnImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"  
+}  
+];  
+  
+const list = document.getElementById("list");  
+const params = new URLSearchParams(window.location.search);  
+const id = params.get("id");  
+  
+/* ================= HOME ================= */  
+function renderHome(data){  
+  
+list.innerHTML = "";  
+  
+data.forEach(c=>{  
+  
+const url = SITE + "?id=" + c.id;  
+  
+list.innerHTML += `  
+<div class="card">  
+  
+<div class="company">${c.entreprise}</div>  
+<div class="job">${c.fonction}</div>  
+  
+<div class="avatar"><img src="${c.photo}"></div>  
+  
+<div class="box">  
+<i class="fa fa-user"></i>  
+<div>  
+<div class="label">PROPRIÉTAIRE</div>  
+<div class="value">${c.owner}</div>  
+</div>  
+</div>  
+  
+<div class="box"><img src="${c.orangeImg}">  
+<div><div class="label">ORANGE MONEY</div><div class="value">${c.orange}</div></div></div>  
+  
+<div class="box"><img src="${c.mtnImg}">  
+<div><div class="label">MTN MONEY</div><div class="value">${c.mtn}</div></div></div>  
+  
+<a class="btn" href="${c.site}" target="_blank">🌐 Site</a>  
+<a class="btn" href="tel:${c.phone}">📞 Appeler</a>  
+<a class="btn" href="https://wa.me/${c.whatsapp}" target="_blank">💬 WhatsApp</a>  
+  
+<a class="btn" href="${url}">📂 Ouvrir carte</a>  
+  
+<div class="timer" id="t_${c.id}"></div>  
+  
+</div>`;  
+});  
+}  
+  
+/* ================= DETAIL ================= */  
+function renderDetail(c){  
+  
+const url = SITE + "?id=" + c.id;  
+  
+list.innerHTML = `  
+<div class="card">  
+  
+<div class="company">${c.entreprise}</div>  
+<div class="job">${c.fonction}</div>  
+  
+<div class="avatar"><img src="${c.photo}"></div>  
+  
+<div class="box">  
+<div class="value">👤 ${c.owner}</div>  
+</div>  
+  
+<div class="box"><img src="${c.orangeImg}">  
+<div><div class="label">ORANGE MONEY</div><div class="value">${c.orange}</div></div></div>  
+  
+<div class="box"><img src="${c.mtnImg}">  
+<div><div class="label">MTN MONEY</div><div class="value">${c.mtn}</div></div></div>  
+  
+<a class="btn" href="${c.site}" target="_blank">🌐 Site</a>  
+<a class="btn" href="tel:${c.phone}">📞 Appeler</a>  
+<a class="btn" href="https://wa.me/${c.whatsapp}" target="_blank">💬 WhatsApp</a>  
+  
+<button class="btn" onclick="copyLink('${url}')">🔗 Copier lien</button>  
+  
+</div>`;  
+}  
+  
+/* ================= TIMER ================= */  
+setInterval(()=>{  
+  
+baseData.forEach(c=>{  
+const el = document.getElementById("t_"+c.id);  
+if(!el) return;  
+  
+const diff = endYear - Date.now();  
+  
+if(diff <= 0){  
+el.innerHTML = "🔒 EXPIRÉE";  
+return;  
+}  
+  
+const d = Math.floor(diff/86400000);  
+const h = Math.floor((diff%86400000)/3600000);  
+const m = Math.floor((diff%3600000)/60000);  
+const s = Math.floor((diff%60000)/1000);  
+  
+el.innerHTML = `⏳ ${d}j ${h}h ${m}m ${s}s`;  
+});  
+  
+},1000);  
+  
+/* ================= SEARCH ================= */  
+function searchCards(){  
+const q = document.getElementById("search").value.toLowerCase();  
+  
+const filtered = baseData.filter(c =>  
+c.entreprise.toLowerCase().includes(q) ||  
+c.owner.toLowerCase().includes(q)  
+);  
+  
+renderHome(filtered);  
+}  
+  
+/* ================= HOME BUTTON CONTROL ================= */  
+function updateHomeBtn(){  
+const id = new URLSearchParams(window.location.search).get("id");  
+document.getElementById("homeBtn").style.display = id ? "block" : "none";  
+}  
+  
+/* ================= INIT ================= */  
+if(id){  
+const c = baseData.find(x=>x.id===id);  
+if(c) renderDetail(c);  
+else renderHome(baseData);  
+}else{  
+renderHome(baseData);  
+}  
+  
+updateHomeBtn();  
+function copyLink(url){  
+  
+if(navigator.clipboard && window.isSecureContext){  
+  
+navigator.clipboard.writeText(url)  
+.then(()=>alert("✅ Lien copié !"))  
+.catch(()=>fallbackCopy(url));  
+  
+}else{  
+fallbackCopy(url);  
+}  
+  
+}  
+  
+function fallbackCopy(text){  
+  
+const area=document.createElement("textarea");  
+  
+area.value=text;  
+area.style.position="fixed";  
+area.style.left="-9999px";  
+  
+document.body.appendChild(area);  
+  
+area.focus();  
+area.select();  
+  
+document.execCommand("copy");  
+  
+document.body.removeChild(area);  
+  
+alert("✅ Lien copié !");  
+}  
+  
+</script>  </body>  
 </html>
