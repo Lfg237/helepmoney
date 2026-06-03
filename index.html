@@ -335,9 +335,13 @@ const baseData = [
 ];
 
 /* INIT STORAGE */
-baseData.forEach(c=>{
-  if(localStorage.getItem("balance_"+c.id) === null){
-    localStorage.setItem("balance_"+c.id, c.balance);
+/* INIT STORAGE */
+baseData.forEach(c => {
+  if (localStorage.getItem("balance_" + c.id) === null) {
+    localStorage.setItem(
+      "balance_" + c.id,
+      Number(c.balance || 0)
+    );
   }
 });
 
@@ -475,7 +479,6 @@ if(result.length === 0){
   alert("❌ Aucun résultat trouvé");
   return;
 }
-
 let text = "🔎 RESULTATS :\n\n";
 
 result.forEach(c=>{
@@ -683,12 +686,12 @@ return;
 }
 
 const sujet =
-"Demande de crédit HelpMoney";
+"Depot de crédit HelpMoney";
 
 const message =
 `Bonjour,
 
-Je souhaite effectuer une demande de crédit.
+Je souhaite effectuer un depot de crédit.
 
 Dépositaire : ${selectedCard.owner}
 Bénéficiaire : ${beneficiaire}
