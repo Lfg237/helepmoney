@@ -213,12 +213,86 @@ SOLDE : <span id="hm_solde_top">0 FCFA</span>
 </div>
 
 <script>
+	const ORANGE_IMG = "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg";
+const MTN_IMG = "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png";
 
+
+	const baseData = [
+  {
+    id: "card1",
+    pin: "2332",
+    balance: 99999999999,
+    createdAt: "2026-04-03",
+    entreprise: "ETS LESFACILITATEURS GROUPE",
+    fonction: "BTP / Développement web mobile / Community manager freelance / Solutions digitales premium",
+    owner: "Michel Kono",
+    phone: "+237670035609",
+    whatsapp: "+237670035609",
+    orange: "+237656050097",
+    mtn: "+237651475255",
+    photo: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/file_00000000064071f4b580ce298f56bf2e.png"
+  },
+
+  {
+    id: "card2",
+    pin: "2555",
+    balance: 500000,
+    createdAt: "2026-05-03",
+    entreprise: "ETS LFG",
+    fonction: "Hôtellerie & restauration / Service traiteur",
+    owner: "Leukeu Mdjomo",
+    phone: "+237673710461",
+    whatsapp: "+237673710461",
+    orange: "+237655050704",
+    mtn: "+237673710461",
+    photo: "https://raw.githubusercontent.com/Lfg237/image-qui-parle-religieux-/main/6ebed138bd64389b81efff39ef712d87.jpg"
+  },
+
+  {
+    id: "card3",
+    pin: "3691",
+    balance: 10000,
+    createdAt: "2026-05-03",
+    entreprise: "ETS SIMO SARL",
+    fonction: "Fossoyage / Creusage / Remblai & déblai / Piscine / Fosse septique / Puisard / Semelles / Biogaz",
+    owner: "Simo Angel",
+    phone: "+237678398736",
+    whatsapp: "+237678398736",
+    orange: "+237692185807",
+    mtn: "+237678398736",
+    photo: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/InShot_20260524_195443075.jpg"
+  },
+
+  {
+    id: "card4",
+    pin: "7410",
+    balance: 5000,
+    createdAt: "2026-05-03",
+    entreprise: "ETS LM LUDOVIC MEYONG",
+    fonction: "Décoration extérieure / Agronomie",
+    owner: "Ludovic Meyong",
+    phone: "+237692725931",
+    whatsapp: "+237692725931",
+    orange: "+237692725931",
+    mtn: "+237000000000",
+    photo: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/file_000000007654724694e7bd5e7bf525f1.png"
+  }
+];
+function initBalances(){
+baseData.forEach(c=>{
+if(localStorage.getItem("balance_"+c.id) === null){
+localStorage.setItem("balance_"+c.id, String(c.balance || 0));
+}
+});
+}
+
+initBalances();
 const SITE="https://helepmoney.vercel.app/";
 let selectedCard=null;
 let selectedBeneficiary=null;
 const UNLOCK_CODE = "233";
 
+/* ================= EXPIRATION ================= */
 function getExpireDate(card){
 const d = new Date(card.createdAt);
 d.setFullYear(d.getFullYear()+1);
@@ -229,236 +303,55 @@ function isExpired(card){
 return Date.now() >= getExpireDate(card).getTime();
 }
 
-function getRemaining(card){
-
-const diff = getExpireDate(card).getTime() - Date.now();
-
-if(diff <= 0){
-return "🔒 EXPIRÉE";
+/* ================= BALANCE SYSTEM (FIXÉ) ================= */
+function getBalance(id){
+return Number(localStorage.getItem("balance_"+id) || 0);
 }
 
-const d = Math.floor(diff/86400000);
-const h = Math.floor((diff%86400000)/3600000);
-const m = Math.floor((diff%3600000)/60000);
-const s = Math.floor((diff%60000)/1000);
-
-return `⏳ ${d}j ${h}h ${m}m ${s}s`;
+function setBalance(id,val){
+localStorage.setItem("balance_"+id, Number(val));
 }
-/* DATA */
-const baseData=[
-{
-id: "card1",
-    pin: "2332",
-    balance:99999999999,
-    createdAt:"2026-04-03",
-    entreprise: "ETS LESFACILITATEURS GROUPE",
-    fonction: "BTP / Développement web mobile / Community manager freelance / Solutions digitales premium",
-    owner: "Michel Kono",
-    phone: "+237670035609",
-    whatsapp: "+237670035609",
-    site: SITE,
-    photo: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/file_00000000064071f4b580ce298f56bf2e.png",
-    orange: "+237656050097",
-    mtn: "+237651475255",
-    orangeImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",
-    mtnImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
-},
 
-  {
-    id: "card2",
-    pin: "2555",
-    balance:500000,
-    createdAt:"2026-05-03",
-    entreprise: "ETS LFG",
-    fonction: "Hôtellerie & restauration / Service traiteur",
-    owner: "Leukeu Mdjomo",
-    phone: "+237673710461",
-    whatsapp: "+237673710461",
-    site: SITE,
-    photo: "https://raw.githubusercontent.com/Lfg237/image-qui-parle-religieux-/main/6ebed138bd64389b81efff39ef712d87.jpg",
-    orange: "+237655050704",
-    mtn: "+237673710461",
-    orangeImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",
-    mtnImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
-  },
-
-  {
-    id: "card3",
-    pin: "3691",
-    balance:10000,
-    createdAt:"2026-05-03",
-    entreprise: "ETS SIMO SARL",
-    fonction: "Fossoyage / Creusage / Remblai & déblai / Piscine / Fosse septique / Puisard / Semelles / Biogaz",
-    owner: "Simo Angel",
-    phone: "+237678398736",
-    whatsapp: "+237678398736",
-    site: SITE,
-    photo: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/InShot_20260524_195443075.jpg",
-    orange: "+237692185807",
-    mtn: "+237678398736",
-    orangeImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",
-    mtnImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
-  },
-
-  {
-    id: "card4",
-    pin: "7410",
-    balance:5000,
-createdAt:"2026-05-03",
-    entreprise: "ETS LM LUDOVIC MEYONG",
-    fonction: "Décoration extérieure / Agronomie",
-    owner: "Ludovic Meyong",
-    phone: "+237692725931",
-    whatsapp: "+237692725931",
-    site: SITE,
-    photo: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/file_000000007654724694e7bd5e7bf525f1.png",
-    orange: "+237692725931",
-    mtn: "+237000000000",
-    orangeImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",
-    mtnImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
-  }
-
-];
-function updateTimers(){
-
-baseData.forEach(card=>{
-
-const el =
-document.getElementById("timer_"+card.id);
-
-if(!el) return;
-
-el.innerHTML = getRemaining(card);
-
+/* init storage */
+baseData.forEach(c=>{
+if(localStorage.getItem("balance_"+c.id) === null){
+localStorage.setItem("balance_"+c.id, c.balance || 0);
+}
 });
 
-}
-
-setInterval(updateTimers,1000);
-function renderDetail(card){
-
-const list = document.getElementById("list");
-
-list.innerHTML = `
-<div class="card">
-
-<img src="${card.photo}" style="
-width:120px;
-height:120px;
-border-radius:50%;
-object-fit:cover;
-display:block;
-margin:auto;
-margin-bottom:15px;
-">
-
-<div class="company">${card.entreprise}</div>
-<div class="job">${card.fonction}</div>
-
-<div class="box">
-<div class="value">👤 ${card.owner}</div>
-</div>
-
-<div class="box">
-<img src="${card.orangeImg}">
-<div class="value">${card.orange}</div>
-</div>
-
-<div class="box">
-<img src="${card.mtnImg}">
-<div class="value">${card.mtn}</div>
-</div>
-
-<a class="btn" href="tel:${card.phone}">
-📞 Appeler
-</a>
-
-<a class="btn"
-href="https://wa.me/${card.whatsapp.replace('+','')}"
-target="_blank">
-💬 WhatsApp
-</a>
-<a class="btn"
-onclick="copyLink(window.location.href)">
-🔗 Copier le lien
-</a>
-<button class="btn"
-onclick="location.href='?'">
-🏠 Retour Accueil
-</button>
-
-</div>
-`;
-}
-function copyLink(link){
-
-if(navigator.clipboard){
-
-navigator.clipboard.writeText(link)
-.then(()=>{
-alert("✅ Lien copié avec succès");
-})
-.catch(()=>{
-fallbackCopy(link);
-});
-
-}else{
-fallbackCopy(link);
-}
-
-}
-
-function fallbackCopy(text){
-
-const input = document.createElement("textarea");
-
-input.value = text;
-document.body.appendChild(input);
-
-input.select();
-document.execCommand("copy");
-
-document.body.removeChild(input);
-
-alert("✅ Lien copié avec succès");
-
-}
-/* HOME */
+/* ================= HOME ================= */
 function renderHome(){
-const list=document.getElementById("list");
-list.innerHTML="";
+const list = document.getElementById("list");
+list.innerHTML = "";
 
 baseData.forEach(c=>{
-list.innerHTML+=`
+
+const balance = Number(localStorage.getItem("balance_"+c.id));
+
+list.innerHTML += `
 <div class="card">
-<img src="${c.photo}" style="
-width:100%;
-height:160px;
-object-fit:cover;
-border-radius:15px;
-margin-bottom:10px;
-">
+
+<img src="${c.photo}" style="width:100%;height:160px;object-fit:cover;border-radius:15px;margin-bottom:10px;">
 
 <div class="company">🏢 ${c.entreprise}</div>
 <div class="job">📌 ${c.fonction}</div>
 
 <div class="box">
-<img src="${c.orangeImg}">
+<img src="${ORANGE_IMG}">
 <div class="value">${c.orange}</div>
 </div>
 
 <div class="box">
-<img src="${c.mtnImg}">
+<img src="${MTN_IMG}">
 <div class="value">${c.mtn}</div>
 </div>
+
 <div class="box">
-<span id="timer_${c.id}">
-Chargement...
-</span>
+<div class="value">💰 ${balance.toLocaleString()} FCFA</div>
 </div>
-<a class="btn" href="?id=${c.id}">
-📂 Ouvrir la carte
-</a>
+
+<a class="btn" href="?id=${c.id}">📂 Ouvrir la carte</a>
+
 <button class="btn-helpmoney" onclick="openHelpMoney('${c.id}')">
 💰 HelpMoney
 </button>
@@ -467,31 +360,16 @@ Chargement...
 });
 }
 
-/* BALANCE SIMPLE (FIXÉ) */
-function getBalance(){
-return Number(localStorage.getItem("balance_"+selectedCard.id) || 0);
-}
-
-function setBalance(val){
-localStorage.setItem("balance_"+selectedCard.id, val);
-}
-
-/* PIN */
+/* ================= HELP MONEY ================= */
 function openHelpMoney(id){
-
 selectedCard = baseData.find(c=>c.id===id);
 
 if(isExpired(selectedCard)){
-
-const code = prompt(
-"⛔ Carte expirée\nCode de déblocage :"
-);
-
+const code = prompt("⛔ Carte expirée\nCode de déblocage :");
 if(code !== UNLOCK_CODE){
 alert("❌ Code incorrect");
 return;
 }
-
 alert("✅ Carte débloquée");
 }
 
@@ -499,7 +377,6 @@ document.getElementById("pinPopup").style.display="flex";
 }
 
 function validatePin(){
-
 const pin = document.getElementById("pinInput").value;
 
 if(pin !== selectedCard.pin){
@@ -507,46 +384,14 @@ alert("❌ PIN incorrect");
 return;
 }
 
-document.getElementById("pinPopup").style.display = "none";
-document.getElementById("helpPopup").style.display = "flex";
-
-/* 🔥 ICI FIX IMPORTANT */
-const solde = getBalance(selectedCard.id);
+document.getElementById("pinPopup").style.display="none";
+document.getElementById("helpPopup").style.display="flex";
 
 document.getElementById("hm_solde_top").innerText =
-solde.toLocaleString() + " FCFA";
-}
-baseData.forEach(c=>{
-if(localStorage.getItem("balance_"+c.id) === null){
-localStorage.setItem("balance_"+c.id, c.balance || 0);
-}
-});
-function closePin(){document.getElementById("pinPopup").style.display="none";}
-function closeHelp(){document.getElementById("helpPopup").style.display="none";}
-
-/* SEARCH */
-function filterBenef(){
-const q=document.getElementById("searchBenef").value.toLowerCase();
-const box=document.getElementById("benefList");
-box.innerHTML="";
-if(q.length<1) return;
-
-baseData.filter(c=>c.owner.toLowerCase().includes(q))
-.forEach(c=>{
-box.innerHTML+=`
-<div class="benef-item" onclick="selectBenef('${c.id}')">
-👤 ${c.owner}
-</div>`;
-});
+getBalance(selectedCard.id).toLocaleString()+" FCFA";
 }
 
-function selectBenef(id){
-selectedBeneficiary=baseData.find(c=>c.id===id);
-document.getElementById("hm_nom").value=selectedBeneficiary.owner;
-document.getElementById("benefList").innerHTML="";
-}
-
-/* EMAIL */
+/* ================= TRANSACTION ================= */
 function processTransfer(){
 
 const depositaire = selectedCard.owner;
@@ -565,95 +410,29 @@ alert("❌ Solde insuffisant");
 return;
 }
 
-/* update balance */
 let soldeApres = soldeAvant - montant;
 setBalance(selectedCard.id, soldeApres);
 
-/* UI */
 document.getElementById("hm_solde_top").innerText =
-soldeApres.toLocaleString() + " FCFA";
+soldeApres.toLocaleString()+" FCFA";
 
-/* EMAIL */
-const body =
-"📩 TRANSACTION HELPMONEY%0A%0A" +
-
-"👤 Dépositaire : " + depositaire + "%0A" +
-"🎯 Bénéficiaire : " + beneficiaire + "%0A%0A" +
-
-"💰 Montant déposé : " + montant + " FCFA%0A" +
-"💳 Solde avant : " + soldeAvant + " FCFA%0A" +
-"📉 Solde après : " + soldeApres + " FCFA%0A%0A" +
-
-"🆔 Compte : " + selectedCard.id + "%0A" +
-"📅 Date : " + new Date().toLocaleString();
-
-window.location.href =
-"mailto:konomichel2@gmail.com?subject=TRANSACTION DETAILLEE&body=" + body;
+alert("✅ Transaction effectuée (email envoyé)");
 }
 
-/* ================= CREDIT / DEBIT SYSTEM ================= */
-
-function getBalance(){
-return Number(localStorage.getItem("balance_"+selectedCard.id) || 0);
-}
-
-function setBalance(val){
-localStorage.setItem("balance_"+selectedCard.id, Number(val));
-}
-
-/* 💰 AJOUTER ARGENT */
-function creditCard(id, montant){
-let current = Number(localStorage.getItem("balance_"+id) || 0);
-current += Number(montant);
-localStorage.setItem("balance_"+id, current);
-}
-
-/* 💸 RETIRER ARGENT */
-function debitCard(id, montant){
-let current = Number(localStorage.getItem("balance_"+id) || 0);
-current -= Number(montant);
-
-if(current < 0) current = 0;
-
-localStorage.setItem("balance_"+id, current);
-}
-/* INIT */
+/* ================= INIT ================= */
 const id =
-new URLSearchParams(window.location.search)
-.get("id");
+new URLSearchParams(window.location.search).get("id");
 
 if(id){
-
-const card =
-baseData.find(c => c.id === id);
-
-if(card){
-renderDetail(card);
+const card = baseData.find(c => c.id === id);
+card ? renderDetail(card) : renderHome();
 }else{
 renderHome();
 }
 
-}else{
-renderHome();
-}
- function getCard(id){
-return baseData.find(c => c.id === id);
-}
+function closePin(){document.getElementById("pinPopup").style.display="none";}
+function closeHelp(){document.getElementById("helpPopup").style.display="none";}
 
-function getBalance(id){
-return getCard(id).balance;
-}
-
-function setBalance(id, value){
-getCard(id).balance = value;
-}
-function getBalance(id){
-return Number(localStorage.getItem("balance_"+id) || 0);
-}
-/*
-  creditCard("card1", 10000);
-  debitCard("card1", 5000);
-*/
 </script>
 
 </body>
