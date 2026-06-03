@@ -249,6 +249,7 @@ const baseData=[
 {
 id: "card1",
     pin: "2332",
+    balance:99999999999,
     createdAt:"2026-04-03",
     entreprise: "ETS LESFACILITATEURS GROUPE",
     fonction: "BTP / Développement web mobile / Community manager freelance / Solutions digitales premium",
@@ -266,6 +267,7 @@ id: "card1",
   {
     id: "card2",
     pin: "2580",
+    balance:500000,
     createdAt:"2026-05-03",
     entreprise: "ETS LFG",
     fonction: "Hôtellerie & restauration / Service traiteur",
@@ -283,6 +285,7 @@ id: "card1",
   {
     id: "card3",
     pin: "3691",
+    balance:10000,
     createdAt:"2026-05-03",
     entreprise: "ETS SIMO SARL",
     fonction: "Fossoyage / Creusage / Remblai & déblai / Piscine / Fosse septique / Puisard / Semelles / Biogaz",
@@ -300,6 +303,7 @@ id: "card1",
   {
     id: "card4",
     pin: "7410",
+    balance:5000,
 createdAt:"2026-05-03",
     entreprise: "ETS LM LUDOVIC MEYONG",
     fonction: "Décoration extérieure / Agronomie",
@@ -495,20 +499,28 @@ document.getElementById("pinPopup").style.display="flex";
 }
 
 function validatePin(){
-const pin=document.getElementById("pinInput").value;
 
-if(pin!==selectedCard.pin){
+const pin = document.getElementById("pinInput").value;
+
+if(pin !== selectedCard.pin){
 alert("❌ PIN incorrect");
 return;
 }
 
-document.getElementById("pinPopup").style.display="none";
-document.getElementById("helpPopup").style.display="flex";
+document.getElementById("pinPopup").style.display = "none";
+document.getElementById("helpPopup").style.display = "flex";
+
+/* 🔥 ICI FIX IMPORTANT */
+const solde = getBalance(selectedCard.id);
 
 document.getElementById("hm_solde_top").innerText =
-getBalance()+" FCFA";
+solde.toLocaleString() + " FCFA";
 }
-
+baseData.forEach(c=>{
+if(localStorage.getItem("balance_"+c.id) === null){
+localStorage.setItem("balance_"+c.id, c.balance || 0);
+}
+});
 function closePin(){document.getElementById("pinPopup").style.display="none";}
 function closeHelp(){document.getElementById("helpPopup").style.display="none";}
 
@@ -537,38 +549,47 @@ document.getElementById("benefList").innerHTML="";
 /* EMAIL */
 function processTransfer(){
 
-const nom = document.getElementById("hm_nom").value;
-const montant = document.getElementById("hm_montant").value;
+const depositaire = selectedCard.owner;
+const beneficiaire = document.getElementById("hm_nom").value;
+const montant = Number(document.getElementById("hm_montant").value);
 
-if(!nom || !montant){
+if(!beneficiaire || !montant){
 alert("❌ Champs manquants");
 return;
 }
 
-const montantNum = Number(montant);
+let soldeAvant = getBalance(selectedCard.id);
 
-if(montantNum > getBalance()){
+if(montant > soldeAvant){
 alert("❌ Solde insuffisant");
 return;
 }
 
-/* Débit automatique */
-debitCard(selectedCard.id, montantNum);
+/* update balance */
+let soldeApres = soldeAvant - montant;
+setBalance(selectedCard.id, soldeApres);
 
-/* Mise à jour affichage */
+/* UI */
 document.getElementById("hm_solde_top").innerText =
-getBalance() + " FCFA";
+soldeApres.toLocaleString() + " FCFA";
 
-/* Envoi email */
-window.location.href=
-"mailto:konomichel2@gmail.com"
-+"?subject=DEMANDE CREDIT"
-+"&body=BENEFICIAIRE:"+nom
-+"%0AMONTANT:"+montant
-+"%0ACARTE:"+selectedCard.id;
+/* EMAIL */
+const body =
+"📩 TRANSACTION HELPMONEY%0A%0A" +
 
+"👤 Dépositaire : " + depositaire + "%0A" +
+"🎯 Bénéficiaire : " + beneficiaire + "%0A%0A" +
+
+"💰 Montant déposé : " + montant + " FCFA%0A" +
+"💳 Solde avant : " + soldeAvant + " FCFA%0A" +
+"📉 Solde après : " + soldeApres + " FCFA%0A%0A" +
+
+"🆔 Compte : " + selectedCard.id + "%0A" +
+"📅 Date : " + new Date().toLocaleString();
+
+window.location.href =
+"mailto:konomichel2@gmail.com?subject=TRANSACTION DETAILLEE&body=" + body;
 }
-
 
 /* ================= CREDIT / DEBIT SYSTEM ================= */
 
@@ -615,8 +636,20 @@ renderHome();
 }else{
 renderHome();
 }
- 
+ function getCard(id){
+return baseData.find(c => c.id === id);
+}
 
+function getBalance(id){
+return getCard(id).balance;
+}
+
+function setBalance(id, value){
+getCard(id).balance = value;
+}
+function getBalance(id){
+return Number(localStorage.getItem("balance_"+id) || 0);
+}
 /*
   creditCard("card1", 10000);
   debitCard("card1", 5000);
