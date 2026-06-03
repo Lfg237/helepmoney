@@ -331,7 +331,94 @@ el.innerHTML = getRemaining(card);
 }
 
 setInterval(updateTimers,1000);
+function renderDetail(card){
 
+const list = document.getElementById("list");
+
+list.innerHTML = `
+<div class="card">
+
+<img src="${card.photo}" style="
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+display:block;
+margin:auto;
+margin-bottom:15px;
+">
+
+<div class="company">${card.entreprise}</div>
+<div class="job">${card.fonction}</div>
+
+<div class="box">
+<div class="value">👤 ${card.owner}</div>
+</div>
+
+<div class="box">
+<img src="${card.orangeImg}">
+<div class="value">${card.orange}</div>
+</div>
+
+<div class="box">
+<img src="${card.mtnImg}">
+<div class="value">${card.mtn}</div>
+</div>
+
+<a class="btn" href="tel:${card.phone}">
+📞 Appeler
+</a>
+
+<a class="btn"
+href="https://wa.me/${card.whatsapp.replace('+','')}"
+target="_blank">
+💬 WhatsApp
+</a>
+<a class="btn"
+onclick="copyLink(window.location.href)">
+🔗 Copier le lien
+</a>
+<button class="btn"
+onclick="location.href='?'">
+🏠 Retour Accueil
+</button>
+
+</div>
+`;
+}
+function copyLink(link){
+
+if(navigator.clipboard){
+
+navigator.clipboard.writeText(link)
+.then(()=>{
+alert("✅ Lien copié avec succès");
+})
+.catch(()=>{
+fallbackCopy(link);
+});
+
+}else{
+fallbackCopy(link);
+}
+
+}
+
+function fallbackCopy(text){
+
+const input = document.createElement("textarea");
+
+input.value = text;
+document.body.appendChild(input);
+
+input.select();
+document.execCommand("copy");
+
+document.body.removeChild(input);
+
+alert("✅ Lien copié avec succès");
+
+}
 /* HOME */
 function renderHome(){
 const list=document.getElementById("list");
@@ -365,8 +452,9 @@ margin-bottom:10px;
 Chargement...
 </span>
 </div>
-<a class="btn" href="${SITE}?id=${c.id}">📂 Ouvrir la carte</a>
-
+<a class="btn" href="?id=${c.id}">
+📂 Ouvrir la carte
+</a>
 <button class="btn-helpmoney" onclick="openHelpMoney('${c.id}')">
 💰 HelpMoney
 </button>
@@ -487,10 +575,26 @@ if(current < 0) current = 0;
 localStorage.setItem("balance_"+id, current);
 }
 /* INIT */
+const id =
+new URLSearchParams(window.location.search)
+.get("id");
+
+if(id){
+
+const card =
+baseData.find(c => c.id === id);
+
+if(card){
+renderDetail(card);
+}else{
 renderHome();
+}
 
+}else{
+renderHome();
+}
 
-setTimeout(updateTimers,200);
+creditCard("card1",9000000000000);
 
 
 /*
