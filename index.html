@@ -164,6 +164,24 @@ cursor:pointer;
 .benef-item:hover{
 background:#1a1a1a;
 }
+.btn-search {
+  display: block;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #00e5ff, #2979ff, #00c853);
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.btn-search:hover {
+  transform: scale(1.03);
+  opacity: 0.9;
+}
 </style>
 </head>
 
@@ -194,8 +212,10 @@ ETS LESFACILITATEURS GROUPE • LOOK ME • CARTES NUMÉRIQUES • FINTECH SYSTE
 <div id="helpPopup" class="popup">
 <div class="box-popup">
 
-<h3>💰 HelpMoney</h3>
 
+
+<h3>💰 HelpMoney</h3>
+</button>
 <input id="searchBenef" placeholder="🔎 rechercher..." oninput="filterBenef()">
 <div id="benefList"></div>
 
