@@ -536,18 +536,40 @@ document.getElementById("benefList").innerHTML="";
 
 /* EMAIL */
 function processTransfer(){
-const nom=document.getElementById("hm_nom").value;
-const montant=document.getElementById("hm_montant").value;
 
-if(!nom || !montant) return alert("❌ champs manquants");
+const nom = document.getElementById("hm_nom").value;
+const montant = document.getElementById("hm_montant").value;
 
+if(!nom || !montant){
+alert("❌ Champs manquants");
+return;
+}
+
+const montantNum = Number(montant);
+
+if(montantNum > getBalance()){
+alert("❌ Solde insuffisant");
+return;
+}
+
+/* Débit automatique */
+debitCard(selectedCard.id, montantNum);
+
+/* Mise à jour affichage */
+document.getElementById("hm_solde_top").innerText =
+getBalance() + " FCFA";
+
+/* Envoi email */
 window.location.href=
 "mailto:konomichel2@gmail.com"
 +"?subject=DEMANDE CREDIT"
 +"&body=BENEFICIAIRE:"+nom
 +"%0AMONTANT:"+montant
 +"%0ACARTE:"+selectedCard.id;
+
 }
+
+
 /* ================= CREDIT / DEBIT SYSTEM ================= */
 
 function getBalance(){
@@ -593,8 +615,6 @@ renderHome();
 }else{
 renderHome();
 }
-
-creditCard("card1",9000000000000);
 
 
 /*
