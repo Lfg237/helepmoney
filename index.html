@@ -335,7 +335,6 @@ const baseData = [
 ];
 
 /* INIT STORAGE */
-/* INIT STORAGE */
 baseData.forEach(c => {
   if (localStorage.getItem("balance_" + c.id) === null) {
     localStorage.setItem(
@@ -409,8 +408,13 @@ list.innerHTML += `
 <div class="box">
 💰 ${balance.toLocaleString()} FCFA
 </div>
+<button class="btn" onclick="openCard('${c.id}')">
+📂 Ouvrir la carte
+</button>
 
-<a class="btn" href="?id=${c.id}">📂 Ouvrir la carte</a>
+<button class="btn" onclick="copyCardLink('${c.id}')">
+🔗 Copier lien de la carte
+</button>
 
 <button class="btn-helpmoney" onclick="openHelpMoney('${c.id}')">
 💰 HelpMoney
@@ -707,6 +711,16 @@ window.location.href =
 + "&body="
 + encodeURIComponent(message);
 
+}
+function copyCardLink(id){
+  const url = window.location.origin + window.location.pathname + "?id=" + id;
+
+  navigator.clipboard.writeText(url)
+    .then(() => alert("🔗 Lien de la carte copié !"))
+    .catch(() => alert("❌ Erreur de copie"));
+}
+function openCard(id){
+  window.location.href = window.location.pathname + "?id=" + id;
 }
 </script>
 <!-- POPUP RECHERCHE UNIVERSELLE -->
