@@ -1,163 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Multi Cartes Premium 2026</title>
 
-<!DOCTYPE html>  <html lang="fr">  
-<head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width,initial-scale=1.0">  
-<title>Multi Cartes Premium 2026</title>  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>  <style>  
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}  
-  
-body{  
-background:#050816;  
-color:white;  
-padding:20px;  
-}  
-  
-h2{  
-text-align:center;  
-margin-bottom:15px;  
-background:linear-gradient(45deg,#ff6600,#ff00cc,#00ffee);  
--webkit-background-clip:text;  
--webkit-text-fill-color:transparent;  
-}  
-  
-.searchBox{  
-display:flex;  
-gap:10px;  
-margin-bottom:15px;  
-}  
-  
-.searchBox input{  
-flex:1;  
-padding:10px;  
-border-radius:10px;  
-border:none;  
-background:#111;  
-color:white;  
-}  
-  
-.searchBox button{  
-padding:10px 14px;  
-border:none;  
-border-radius:10px;  
-background:linear-gradient(45deg,#ff6600,#ff00cc);  
-color:white;  
-cursor:pointer;  
-}  
-  
-.grid{  
-display:grid;  
-grid-template-columns:repeat(auto-fit,minmax(320px,1fr));  
-gap:20px;  
-}  
-  
-.card{  
-background:rgba(255,255,255,0.08);  
-border:1px solid rgba(255,255,255,0.15);  
-backdrop-filter:blur(25px);  
-border-radius:30px;  
-padding:22px;  
-position:relative;  
-overflow:hidden;  
-}  
-  
-.card::before{  
-content:"";  
-position:absolute;  
-width:200px;height:200px;  
-background:linear-gradient(45deg,#ff6600,#ff00cc);  
-border-radius:50%;  
-top:-80px;right:-60px;  
-filter:blur(60px);  
-opacity:0.4;  
-}  
-  
-.company{text-align:center;font-size:22px;font-weight:bold;text-transform:uppercase;}  
-.job{text-align:center;font-size:14px;color:#ddd;margin-bottom:15px;}  
-  
-.avatar{width:100px;height:100px;margin:auto;border-radius:50%;overflow:hidden;margin-bottom:15px;}  
-.avatar img{width:100%;height:100%;object-fit:cover;}  
-  
-.box{  
-background:rgba(255,255,255,0.06);  
-padding:12px;  
-border-radius:16px;  
-margin-bottom:10px;  
-display:flex;  
-align-items:center;  
-gap:10px;  
-}  
-  
-.box img{width:28px;height:28px;border-radius:8px;}  
-  
-.value{font-weight:bold;font-size:14px;}  
-.label{font-size:12px;color:#bbb;}  
-  
-.btn{  
-display:block;  
-margin-top:8px;  
-padding:10px;  
-border-radius:14px;  
-background:linear-gradient(45deg,#ff6600,#ff00cc);  
-color:white;  
-text-decoration:none;  
-text-align:center;  
-font-weight:bold;  
-cursor:pointer;  
-}  
-  
-.timer{  
-margin-top:10px;  
-text-align:center;  
-padding:10px;  
-background:rgba(255,255,255,0.08);  
-border-radius:14px;  
-color:#00ffee;  
-}  
-  
-/* ===== BOUTON ACCUEIL FIXE ===== */  
-#homeBtn{  
-position:fixed;  
-bottom:20px;  
-left:20px;  
-z-index:9999;  
-padding:12px 16px;  
-border-radius:14px;  
-background:#1e90ff;  
-color:white;  
-font-weight:bold;  
-text-decoration:none;  
-display:none;  
-}  
-  
-  
-.banner{  
-margin:10px 0 15px 0;  
-padding:10px;  
-border-radius:12px;  
-background:linear-gradient(90deg,#ff6600,#ff00cc,#00ffee);  
-overflow:hidden;  
-white-space:nowrap;  
-}  
-  
-.banner-track{  
-display:inline-block;  
-padding-left:100%;  
-animation:scrollBanner 15s linear infinite;  
-font-weight:bold;  
-color:white;  
-}  
-  
-@keyframes scrollBanner{  
-0%{transform:translateX(0);}  
-100%{transform:translateX(-100%);}  
-}  
-/* BOUTON ACCUEIL BANNIÈRE */
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+
+body{
+background:#050816;
+color:white;
+padding:20px;
+}
+
+h2{
+text-align:center;
+margin-bottom:10px;
+background:linear-gradient(45deg,#ff6600,#ff00cc,#00ffee);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
 
 .banner{
 position:relative;
 display:flex;
 align-items:center;
-gap:12px;
+overflow:hidden;
+white-space:nowrap;
+margin-bottom:15px;
+padding:10px;
+background:linear-gradient(90deg,#ff6600,#ff00cc,#00ffee);
+border-radius:12px;
+}
+
+.banner-track{
+display:inline-block;
+white-space:nowrap;
+font-weight:bold;
+padding-left:100%;
+animation:scrollBanner 12s linear infinite;
+}
+
+@keyframes scrollBanner{
+0%{transform:translateX(0%);}
+100%{transform:translateX(-100%);}
 }
 
 .banner-home-btn{
@@ -165,280 +52,452 @@ position:absolute;
 left:10px;
 top:50%;
 transform:translateY(-50%);
-z-index:5;
-
-padding:8px 14px;
-border-radius:12px;
-
+z-index:9999;
+padding:6px 10px;
+border-radius:10px;
 background:white;
 color:#111;
-
-font-size:13px;
+font-size:12px;
 font-weight:bold;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:15px;
+}
+
+.card{
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.15);
+border-radius:25px;
+padding:18px;
+}
+
+.company{text-align:center;font-size:20px;font-weight:bold;}
+.job{text-align:center;font-size:13px;color:#aaa;margin-bottom:10px;}
+
+.box{
+display:flex;
+gap:10px;
+align-items:center;
+background:rgba(255,255,255,0.06);
+padding:10px;
+border-radius:12px;
+margin-bottom:8px;
+}
+
+.box img{
+width:28px;
+height:28px;
+border-radius:6px;
+object-fit:cover;
+}
+
+.btn{
+display:block;
+margin-top:6px;
+padding:7px;
+font-size:12px;
+border-radius:10px;
+background:linear-gradient(45deg,#ff6600,#ff00cc);
+color:white;
+text-align:center;
+cursor:pointer;
 text-decoration:none;
-
-box-shadow:0 4px 10px rgba(0,0,0,0.3);
 }
 
-.banner-track{
-padding-left:170px;
+.btn-helpmoney{
+display:block;
+margin-top:10px;
+padding:12px;
+border-radius:16px;
+background:linear-gradient(135deg,#00e676,#00c853,#64dd17);
+color:#000;
+font-weight:bold;
+cursor:pointer;
+border:none;
 }
-  
-  
-</style>  </head>  <body>  <h2>💥 LOOK ME 🌝 carte de visite numérique </h2>  
+
+.popup{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.85);
+align-items:center;
+justify-content:center;
+z-index:99999;
+}
+
+.box-popup{
+background:#111827;
+padding:20px;
+border-radius:14px;
+width:90%;
+max-width:380px;
+}
+
+.box-popup input{
+width:100%;
+padding:8px;
+margin:5px 0;
+border:none;
+border-radius:8px;
+background:#0b1220;
+color:white;
+}
+
+#benefList{
+max-height:120px;
+overflow:auto;
+background:#0b1220;
+border-radius:8px;
+margin-bottom:10px;
+}
+
+.benef-item{
+padding:6px;
+border-bottom:1px solid #222;
+cursor:pointer;
+}
+
+.benef-item:hover{
+background:#1a1a1a;
+}
+</style>
+</head>
+
+<body>
+
+<h2>💥 LOOK ME 🌝 carte de visite numérique</h2>
 
 <div class="banner">
-
-<a 
-href="https://lesfacilitateurs.vercel.app/" 
-target="_blank"
-class="banner-home-btn">
-🏠 Accueil
-</a>
-
+<a class="banner-home-btn" href="https://lesfacilitateurs.vercel.app/" target="_blank">🏠 Accueil</a>
 <div class="banner-track">
-✨ ETS LESFACILITATEURS GROUPE •💥LOOK ME 🌝  cartes de visites numériques illimitées vallable un an renouvelable à 1000xaf 🖼️• WhatsApp +237670035609 • MTN & Orange Money acceptés • Accès rapide • Support 24/7 ✨
+ETS LESFACILITATEURS GROUPE • LOOK ME • CARTES NUMÉRIQUES • FINTECH SYSTEM
+</div>
 </div>
 
+<div id="list" class="grid"></div>
+
+<!-- PIN -->
+<div id="pinPopup" class="popup">
+<div class="box-popup">
+<h3>🔐 Code PIN</h3>
+<input id="pinInput" type="password">
+<button class="btn" onclick="validatePin()">Valider</button>
+<button class="btn" onclick="closePin()">Retour</button>
+</div>
 </div>
 
-<div class="searchBox">  
-<input id="search" placeholder="🔎 rechercher une carte...">  
-<button onclick="searchCards()"><i class="fa fa-search"></i></button>  
-</div>  <div id="list" class="grid"></div>  <!-- 🔵 BOUTON ACCUEIL GLOBAL -->  <a id="homeBtn" href="https://helepmoney.vercel.app/">🏠 Accueil</a>
+<!-- HELP -->
+<div id="helpPopup" class="popup">
+<div class="box-popup">
 
-<script>  
-  
-const SITE = "https://helepmoney.vercel.app/";  
-  
-const endYear = new Date(new Date().getFullYear(),11,31,23,59,59).getTime();  
-  
-const baseData = [  
-{  
-id:"card1",  
-entreprise:"ETS LESFACILITATEURS GROUPE",  
-fonction:" BTP développement web mobile community manager freelance solution digital premium",  
-owner:"Michel Kono",  
-phone:"+237670035609",  
-whatsapp:"237670035609",  
-site:SITE,  
-photo:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/file_00000000064071f4b580ce298f56bf2e.png",  
-orange:"+237656050097",  
-mtn:"+237651475255",  
-orangeImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",  
-mtnImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"  
-},  
+<h3>💰 HelpMoney</h3>
 
-{  
-id:"card2",  
-entreprise:"ets lfg ",  
-fonction:" hôtellerie & restauration / service traiteur",  
-owner:"leukeu mdjomo",  
-phone:"+237673710461",  
-whatsapp:"237 6 21 07 29 73",  
-site:SITE,  
-photo:"https://raw.githubusercontent.com/Lfg237/image-qui-parle-religieux-/main/6ebed138bd64389b81efff39ef712d87.jpg",  
-orange:"+237655050704",  
-mtn:"+237673710461",  
-orangeImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",  
-mtnImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"  
+<input id="searchBenef" placeholder="🔎 rechercher..." oninput="filterBenef()">
+<div id="benefList"></div>
+
+<div style="padding:10px;background:#00c853;color:black;border-radius:10px;font-weight:bold;margin-bottom:10px;">
+SOLDE : <span id="hm_solde_top">0 FCFA</span>
+</div>
+
+<input id="hm_nom" placeholder="Bénéficiaire">
+<input id="hm_montant" type="number" placeholder="Montant">
+
+<button class="btn" onclick="processTransfer()">💸 Demande de crédit</button>
+<button class="btn" onclick="closeHelp()">↩ Retour</button>
+
+</div>
+</div>
+
+<script>
+
+const SITE="https://helepmoney.vercel.app/";
+let selectedCard=null;
+let selectedBeneficiary=null;
+const UNLOCK_CODE = "233";
+
+function getExpireDate(card){
+const d = new Date(card.createdAt);
+d.setFullYear(d.getFullYear()+1);
+return d;
+}
+
+function isExpired(card){
+return Date.now() >= getExpireDate(card).getTime();
+}
+
+function getRemaining(card){
+
+const diff = getExpireDate(card).getTime() - Date.now();
+
+if(diff <= 0){
+return "🔒 EXPIRÉE";
+}
+
+const d = Math.floor(diff/86400000);
+const h = Math.floor((diff%86400000)/3600000);
+const m = Math.floor((diff%3600000)/60000);
+const s = Math.floor((diff%60000)/1000);
+
+return `⏳ ${d}j ${h}h ${m}m ${s}s`;
+}
+/* DATA */
+const baseData=[
+{
+id: "card1",
+    pin: "2332",
+    createdAt:"2026-04-03",
+    entreprise: "ETS LESFACILITATEURS GROUPE",
+    fonction: "BTP / Développement web mobile / Community manager freelance / Solutions digitales premium",
+    owner: "Michel Kono",
+    phone: "+237670035609",
+    whatsapp: "+237670035609",
+    site: SITE,
+    photo: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/file_00000000064071f4b580ce298f56bf2e.png",
+    orange: "+237656050097",
+    mtn: "+237651475255",
+    orangeImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",
+    mtnImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
 },
 
-{  
-id:"card3",  
-entreprise:"ets Simo sarl ",  
-fonction:" fossoyeur creusage & construction remblai & deblai piscine fouille fausse septique puisard semelle biogaz",  
-owner:"Simo angel",  
-phone:"+237673710461",  
-whatsapp:"237 6 21 07 29 73",  
-site:SITE,  
-photo:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/InShot_20260524_195443075.jpg",  
-orange:"+237692185807 majhe",  
-mtn:"+237+237678398736 Jeanne nketizue",  
-orangeImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",  
-mtnImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"  
-},
+  {
+    id: "card2",
+    pin: "2580",
+    createdAt:"2026-05-03",
+    entreprise: "ETS LFG",
+    fonction: "Hôtellerie & restauration / Service traiteur",
+    owner: "Leukeu Mdjomo",
+    phone: "+237673710461",
+    whatsapp: "+237673710461",
+    site: SITE,
+    photo: "https://raw.githubusercontent.com/Lfg237/image-qui-parle-religieux-/main/6ebed138bd64389b81efff39ef712d87.jpg",
+    orange: "+237655050704",
+    mtn: "+237673710461",
+    orangeImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",
+    mtnImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
+  },
 
-{  
-id:"card4",  
-entreprise:"ets lm Ludovic meyong",  
-fonction:" décoration extérieure agronomie",  
-owner:"Ludovic meyong",  
-phone:"+237692725931",  
-whatsapp:"237 6 92 72 59 31",  
-site:SITE,  
-photo:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/file_000000007654724694e7bd5e7bf525f1.png",  
-orange:"+237692725931 tedonzio Michel fopa",  
-mtn:"+237+237xxxxx",  
-orangeImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",  
-mtnImg:"https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"  
-}  
-];  
-  
-const list = document.getElementById("list");  
-const params = new URLSearchParams(window.location.search);  
-const id = params.get("id");  
-  
-/* ================= HOME ================= */  
-function renderHome(data){  
-  
-list.innerHTML = "";  
-  
-data.forEach(c=>{  
-  
-const url = SITE + "?id=" + c.id;  
-  
-list.innerHTML += `  
-<div class="card">  
-  
-<div class="company">${c.entreprise}</div>  
-<div class="job">${c.fonction}</div>  
-  
-<div class="avatar"><img src="${c.photo}"></div>  
-  
-<div class="box">  
-<i class="fa fa-user"></i>  
-<div>  
-<div class="label">PROPRIÉTAIRE</div>  
-<div class="value">${c.owner}</div>  
-</div>  
-</div>  
-  
-<div class="box"><img src="${c.orangeImg}">  
-<div><div class="label">ORANGE MONEY</div><div class="value">${c.orange}</div></div></div>  
-  
-<div class="box"><img src="${c.mtnImg}">  
-<div><div class="label">MTN MONEY</div><div class="value">${c.mtn}</div></div></div>  
-  
-<a class="btn" href="${c.site}" target="_blank">🌐 Site</a>  
-<a class="btn" href="tel:${c.phone}">📞 Appeler</a>  
-<a class="btn" href="https://wa.me/${c.whatsapp}" target="_blank">💬 WhatsApp</a>  
-  
-<a class="btn" href="${url}">📂 Ouvrir carte</a>  
-  
-<div class="timer" id="t_${c.id}"></div>  
-  
-</div>`;  
-});  
-}  
-  
-/* ================= DETAIL ================= */  
-function renderDetail(c){  
-  
-const url = SITE + "?id=" + c.id;  
-  
-list.innerHTML = `  
-<div class="card">  
-  
-<div class="company">${c.entreprise}</div>  
-<div class="job">${c.fonction}</div>  
-  
-<div class="avatar"><img src="${c.photo}"></div>  
-  
-<div class="box">  
-<div class="value">👤 ${c.owner}</div>  
-</div>  
-  
-<div class="box"><img src="${c.orangeImg}">  
-<div><div class="label">ORANGE MONEY</div><div class="value">${c.orange}</div></div></div>  
-  
-<div class="box"><img src="${c.mtnImg}">  
-<div><div class="label">MTN MONEY</div><div class="value">${c.mtn}</div></div></div>  
-  
-<a class="btn" href="${c.site}" target="_blank">🌐 Site</a>  
-<a class="btn" href="tel:${c.phone}">📞 Appeler</a>  
-<a class="btn" href="https://wa.me/${c.whatsapp}" target="_blank">💬 WhatsApp</a>  
-  
-<button class="btn" onclick="copyLink('${url}')">🔗 Copier lien</button>  
-  
-</div>`;  
-}  
-  
-/* ================= TIMER ================= */  
-setInterval(()=>{  
-  
-baseData.forEach(c=>{  
-const el = document.getElementById("t_"+c.id);  
-if(!el) return;  
-  
-const diff = endYear - Date.now();  
-  
-if(diff <= 0){  
-el.innerHTML = "🔒 EXPIRÉE";  
-return;  
-}  
-  
-const d = Math.floor(diff/86400000);  
-const h = Math.floor((diff%86400000)/3600000);  
-const m = Math.floor((diff%3600000)/60000);  
-const s = Math.floor((diff%60000)/1000);  
-  
-el.innerHTML = `⏳ ${d}j ${h}h ${m}m ${s}s`;  
-});  
-  
-},1000);  
-  
-/* ================= SEARCH ================= */  
-function searchCards(){  
-const q = document.getElementById("search").value.toLowerCase();  
-  
-const filtered = baseData.filter(c =>  
-c.entreprise.toLowerCase().includes(q) ||  
-c.owner.toLowerCase().includes(q)  
-);  
-  
-renderHome(filtered);  
-}  
-  
-/* ================= HOME BUTTON CONTROL ================= */  
-function updateHomeBtn(){  
-const id = new URLSearchParams(window.location.search).get("id");  
-document.getElementById("homeBtn").style.display = id ? "block" : "none";  
-}  
-  
-/* ================= INIT ================= */  
-if(id){  
-const c = baseData.find(x=>x.id===id);  
-if(c) renderDetail(c);  
-else renderHome(baseData);  
-}else{  
-renderHome(baseData);  
-}  
-  
-updateHomeBtn();  
-function copyLink(url){  
-  
-if(navigator.clipboard && window.isSecureContext){  
-  
-navigator.clipboard.writeText(url)  
-.then(()=>alert("✅ Lien copié !"))  
-.catch(()=>fallbackCopy(url));  
-  
-}else{  
-fallbackCopy(url);  
-}  
-  
-}  
-  
-function fallbackCopy(text){  
-  
-const area=document.createElement("textarea");  
-  
-area.value=text;  
-area.style.position="fixed";  
-area.style.left="-9999px";  
-  
-document.body.appendChild(area);  
-  
-area.focus();  
-area.select();  
-  
-document.execCommand("copy");  
-  
-document.body.removeChild(area);  
-  
-alert("✅ Lien copié !");  
-}  
-  
-</script>  </body>  
+  {
+    id: "card3",
+    pin: "3691",
+    createdAt:"2026-05-03",
+    entreprise: "ETS SIMO SARL",
+    fonction: "Fossoyage / Creusage / Remblai & déblai / Piscine / Fosse septique / Puisard / Semelles / Biogaz",
+    owner: "Simo Angel",
+    phone: "+237678398736",
+    whatsapp: "+237678398736",
+    site: SITE,
+    photo: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/InShot_20260524_195443075.jpg",
+    orange: "+237692185807",
+    mtn: "+237678398736",
+    orangeImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",
+    mtnImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
+  },
+
+  {
+    id: "card4",
+    pin: "7410",
+createdAt:"2026-05-03",
+    entreprise: "ETS LM LUDOVIC MEYONG",
+    fonction: "Décoration extérieure / Agronomie",
+    owner: "Ludovic Meyong",
+    phone: "+237692725931",
+    whatsapp: "+237692725931",
+    site: SITE,
+    photo: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/file_000000007654724694e7bd5e7bf525f1.png",
+    orange: "+237692725931",
+    mtn: "+237000000000",
+    orangeImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/orange-money.jpg",
+    mtnImg: "https://raw.githubusercontent.com/Lfg237/image-lovestring/main/5-2.png"
+  }
+
+];
+function updateTimers(){
+
+baseData.forEach(card=>{
+
+const el =
+document.getElementById("timer_"+card.id);
+
+if(!el) return;
+
+el.innerHTML = getRemaining(card);
+
+});
+
+}
+
+setInterval(updateTimers,1000);
+
+/* HOME */
+function renderHome(){
+const list=document.getElementById("list");
+list.innerHTML="";
+
+baseData.forEach(c=>{
+list.innerHTML+=`
+<div class="card">
+<img src="${c.photo}" style="
+width:100%;
+height:160px;
+object-fit:cover;
+border-radius:15px;
+margin-bottom:10px;
+">
+
+<div class="company">🏢 ${c.entreprise}</div>
+<div class="job">📌 ${c.fonction}</div>
+
+<div class="box">
+<img src="${c.orangeImg}">
+<div class="value">${c.orange}</div>
+</div>
+
+<div class="box">
+<img src="${c.mtnImg}">
+<div class="value">${c.mtn}</div>
+</div>
+<div class="box">
+<span id="timer_${c.id}">
+Chargement...
+</span>
+</div>
+<a class="btn" href="${SITE}?id=${c.id}">📂 Ouvrir la carte</a>
+
+<button class="btn-helpmoney" onclick="openHelpMoney('${c.id}')">
+💰 HelpMoney
+</button>
+
+</div>`;
+});
+}
+
+/* BALANCE SIMPLE (FIXÉ) */
+function getBalance(){
+return Number(localStorage.getItem("balance_"+selectedCard.id) || 0);
+}
+
+function setBalance(val){
+localStorage.setItem("balance_"+selectedCard.id, val);
+}
+
+/* PIN */
+function openHelpMoney(id){
+
+selectedCard = baseData.find(c=>c.id===id);
+
+if(isExpired(selectedCard)){
+
+const code = prompt(
+"⛔ Carte expirée\nCode de déblocage :"
+);
+
+if(code !== UNLOCK_CODE){
+alert("❌ Code incorrect");
+return;
+}
+
+alert("✅ Carte débloquée");
+}
+
+document.getElementById("pinPopup").style.display="flex";
+}
+
+function validatePin(){
+const pin=document.getElementById("pinInput").value;
+
+if(pin!==selectedCard.pin){
+alert("❌ PIN incorrect");
+return;
+}
+
+document.getElementById("pinPopup").style.display="none";
+document.getElementById("helpPopup").style.display="flex";
+
+document.getElementById("hm_solde_top").innerText =
+getBalance()+" FCFA";
+}
+
+function closePin(){document.getElementById("pinPopup").style.display="none";}
+function closeHelp(){document.getElementById("helpPopup").style.display="none";}
+
+/* SEARCH */
+function filterBenef(){
+const q=document.getElementById("searchBenef").value.toLowerCase();
+const box=document.getElementById("benefList");
+box.innerHTML="";
+if(q.length<1) return;
+
+baseData.filter(c=>c.owner.toLowerCase().includes(q))
+.forEach(c=>{
+box.innerHTML+=`
+<div class="benef-item" onclick="selectBenef('${c.id}')">
+👤 ${c.owner}
+</div>`;
+});
+}
+
+function selectBenef(id){
+selectedBeneficiary=baseData.find(c=>c.id===id);
+document.getElementById("hm_nom").value=selectedBeneficiary.owner;
+document.getElementById("benefList").innerHTML="";
+}
+
+/* EMAIL */
+function processTransfer(){
+const nom=document.getElementById("hm_nom").value;
+const montant=document.getElementById("hm_montant").value;
+
+if(!nom || !montant) return alert("❌ champs manquants");
+
+window.location.href=
+"mailto:konomichel2@gmail.com"
++"?subject=DEMANDE CREDIT"
++"&body=BENEFICIAIRE:"+nom
++"%0AMONTANT:"+montant
++"%0ACARTE:"+selectedCard.id;
+}
+/* ================= CREDIT / DEBIT SYSTEM ================= */
+
+function getBalance(){
+return Number(localStorage.getItem("balance_"+selectedCard.id) || 0);
+}
+
+function setBalance(val){
+localStorage.setItem("balance_"+selectedCard.id, Number(val));
+}
+
+/* 💰 AJOUTER ARGENT */
+function creditCard(id, montant){
+let current = Number(localStorage.getItem("balance_"+id) || 0);
+current += Number(montant);
+localStorage.setItem("balance_"+id, current);
+}
+
+/* 💸 RETIRER ARGENT */
+function debitCard(id, montant){
+let current = Number(localStorage.getItem("balance_"+id) || 0);
+current -= Number(montant);
+
+if(current < 0) current = 0;
+
+localStorage.setItem("balance_"+id, current);
+}
+/* INIT */
+renderHome();
+
+
+setTimeout(updateTimers,200);
+
+
+/*
+  creditCard("card1", 10000);
+  debitCard("card1", 5000);
+*/
+</script>
+
+</body>
 </html>
